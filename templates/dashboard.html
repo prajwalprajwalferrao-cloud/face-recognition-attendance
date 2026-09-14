@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · FaceTrack{% endblock %}
+{% block content %}
+<div class="dash-grid">
+  <!-- LEFT: video + stats -->
+  <section class="glass video-card">
+    <div class="spread" style="margin-bottom:14px;">
+      <div>
+        <div class="eyebrow">Live Detection</div>
+        <h2>Camera Feed</h2>
+      </div>
+      <div class="status-pill" id="cam-status">
+        <span class="dot"></span><span class="status-text">Initializing…</span>
+      </div>
+    </div>
+
+    <div class="video-frame" id="video-frame">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+      <div class="video-corner tl"></div>
+      <div class="video-corner tr"></div>
+      <div class="video-corner bl"></div>
+      <div class="video-corner br"></div>
+      <div class="model-loader" id="model-loader">
+        <div class="spinner"></div>
+        <div>Loading face detection model…</div>
+        <div class="muted" style="font-size:12px;margin-top:6px;">First load fetches ~6 MB from CDN</div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-value" id="stat-faces">0</div>
+        <div class="stat-label">Faces right now</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="stat-detector">—</div>
+        <div class="stat-label">Detector</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="stat-frame">0</div>
+        <div class="stat-label">Frames analyzed</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: capture form -->
+  <section class="glass capture-card">
+    <div class="eyebrow">Register a Member</div>
+    <h2>Capture Face</h2>
+    <p class="muted" style="margin-top:0;">
+      Position your face inside the camera frame, fill in the details, then capture.
+    </p>
+
+    <form id="capture-form">
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" name="name" type="text" required placeholder="e.g. Aanya Sharma" />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="role">Role</label>
+          <select id="role" name="role">
+            <option value="">—</option>
+            <option>Student</option>
+            <option>Employee</option>
+            <option>Faculty</option>
+            <option>Visitor</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="aanya@example.com" />
+      </div>
+
+      <div class="capture-status" id="capture-status">
+        <span class="capture-dot"></span>
+        <span>Position your face in view, then press capture.</span>
+      </div>
+
+      <button type="submit" id="capture-btn" class="btn btn-primary" style="width:100%;" disabled>
+        Capture &amp; Register
+      </button>
+    </form>
+
+    <div class="divider"></div>
+    <div class="row spread">
+      <span class="muted" style="font-size:13px;">
+        See your roster?
+      </span>
+      <a href="{{ url_for('members_page') }}" class="btn btn-ghost">View members →</a>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="{{ url_for('static', filename='js/face.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,477 @@
+/* ═══════════════════════════════════════════════════════════════
+   portals.css  —  Admin / Teacher / Student portal shared styles
+   FaceTrack Attendance System
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Role badges ─────────────────────────────────────────────── */
+.role-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.role-admin   { background: rgba(255, 43, 214, 0.18); color: #ff2bd6; border: 1px solid rgba(255,43,214,0.35); }
+.role-teacher { background: rgba(122, 92, 255, 0.18); color: #9b80ff; border: 1px solid rgba(122,92,255,0.35); }
+.role-student { background: rgba(62, 230, 208, 0.15); color: #3ee6d0; border: 1px solid rgba(62,230,208,0.3);  }
+
+/* ── Portal page container ──────────────────────────────────── */
+.portal-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Portal header ──────────────────────────────────────────── */
+.portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.portal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.portal-sub {
+  color: var(--muted, #94a3b8);
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+}
+
+/* ── Stats row (admin) ──────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  padding: 1.5rem 1.25rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover { transform: translateY(-3px); }
+
+.stat-icon  { font-size: 2rem; }
+.stat-value { font-size: 2rem; font-weight: 700; color: #fff; font-family: 'Space Grotesk', sans-serif; }
+.stat-label { font-size: 0.8rem; color: var(--muted, #94a3b8); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ── Glass portal card ──────────────────────────────────────── */
+.portal-card {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.portal-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.portal-card-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── Search input ────────────────────────────────────────────── */
+.search-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 0.45rem 0.85rem;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.2s;
+}
+
+.search-input::placeholder { color: rgba(255,255,255,0.3); }
+.search-input:focus { border-color: var(--accent, #3ee6d0); }
+
+/* ── Data table ─────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.data-table th {
+  background: rgba(255,255,255,0.04);
+  color: var(--muted, #94a3b8);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  color: rgba(255,255,255,0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+.data-table tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.data-table code {
+  font-family: monospace;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.07);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Row color tints */
+.row-present td { background: rgba(62, 230, 208, 0.04); }
+.row-absent  td { background: rgba(232, 85, 107, 0.04); }
+
+/* ── Status badges ───────────────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.status-badge.present {
+  background: rgba(62, 230, 208, 0.15);
+  color: #3ee6d0;
+  border: 1px solid rgba(62,230,208,0.3);
+}
+
+.status-badge.absent {
+  background: rgba(232, 85, 107, 0.15);
+  color: #e8556b;
+  border: 1px solid rgba(232,85,107,0.3);
+}
+
+/* ── Thumbnail images ────────────────────────────────────────── */
+.thumb-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.thumb-placeholder {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7a5cff, #3ee6d0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+}
+
+/* ── Inline action forms (admin table) ──────────────────────── */
+.action-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.inline-form {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.mini-select,
+.mini-input {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  outline: none;
+}
+
+.mini-input { width: 90px; }
+.mini-select option { background: #1a1a2e; }
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn-sm {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-outline:hover { background: rgba(255,255,255,0.07); }
+
+.btn-danger {
+  background: rgba(232, 85, 107, 0.2);
+  border: 1px solid rgba(232,85,107,0.4);
+  color: #e8556b;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover { background: rgba(232, 85, 107, 0.35); }
+
+/* ── Teacher portal controls ─────────────────────────────────── */
+.teacher-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+}
+
+.date-form {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.date-form label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.date-form input[type="date"] {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.85rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.date-form input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.5);
+  cursor: pointer;
+}
+
+/* ── Mini stats (teacher) ────────────────────────────────────── */
+.mini-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mini-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  min-width: 64px;
+}
+
+.ms-val   { font-size: 1.5rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+.ms-label { font-size: 0.7rem; color: var(--muted, #94a3b8); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.mini-stat.present .ms-val { color: #3ee6d0; }
+.mini-stat.absent  .ms-val { color: #e8556b; }
+.mini-stat.total   .ms-val { color: #fff; }
+.mini-stat.rate    .ms-val { color: #f0a500; }
+
+/* ── Student portal ─────────────────────────────────────────── */
+.student-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .student-top-row { grid-template-columns: 1fr; }
+}
+
+.student-profile-card {
+  border-radius: 1rem;
+  padding: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.student-face-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(62,230,208,0.4);
+  flex-shrink: 0;
+}
+
+.student-face-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7a5cff, #3ee6d0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.student-info h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.student-meta {
+  font-size: 0.875rem;
+  color: var(--muted, #94a3b8);
+  margin: 0.15rem 0;
+}
+
+/* ── Attendance ring card ────────────────────────────────────── */
+.student-stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.attendance-ring-card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.ring-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.ring-svg {
+  width: 140px;
+  height: 140px;
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.07);
+  stroke-width: 10;
+}
+
+.ring-fill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.8s ease;
+}
+
+.ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ring-pct {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #fff;
+  line-height: 1;
+}
+
+.ring-lbl {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted, #94a3b8);
+}
+
+.ring-detail {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.6);
+  margin: 0;
+}
+
+.ring-warn { color: #f0a500; font-size: 0.85rem; margin: 0; font-weight: 600; }
+.ring-good { color: #3ee6d0;  font-size: 0.85rem; margin: 0; font-weight: 600; }
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--muted, #94a3b8);
+}
+
+.empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.empty-state p { font-size: 1rem; }
+
+/* ── muted label ─────────────────────────────────────────────── */
+.muted-label {
+  font-size: 0.8rem;
+  color: var(--muted, #94a3b8);
+}

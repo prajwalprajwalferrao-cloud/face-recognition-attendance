@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}Create account · FaceTrack{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  <aside class="auth-hero">
+    <div class="auth-hero-content">
+      <div class="brand-top">
+        <span class="brand-dot"></span>
+        <span>FaceTrack</span>
+      </div>
+      <h1>Set up your workspace in seconds.</h1>
+      <p>
+        Create an account to start capturing members, recognizing faces,
+        and managing attendance from a single dashboard.
+      </p>
+    </div>
+
+    <div class="auth-hero-bullets">
+      <div class="bullet">
+        <span class="bullet-mark">A</span>
+        Encrypted password storage (PBKDF2)
+      </div>
+      <div class="bullet">
+        <span class="bullet-mark">B</span>
+        Members are scoped to your account
+      </div>
+      <div class="bullet">
+        <span class="bullet-mark">C</span>
+        No camera data ever leaves your browser
+      </div>
+    </div>
+
+    <div class="auth-face-art" aria-hidden="true">
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7a5cff" stop-opacity="0.5" />
+            <stop offset="100%" stop-color="#7a5cff" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="rg2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.4" />
+            <stop offset="100%" stop-color="#00f5ff" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="180" cy="220" r="190" fill="url(#rg1)" />
+        <circle cx="240" cy="160" r="130" fill="url(#rg2)" />
+        <g class="ring" stroke="rgba(0,245,255,0.45)" fill="none" stroke-width="1">
+          <circle cx="200" cy="200" r="160" />
+          <circle cx="200" cy="200" r="110" stroke-dasharray="3 7" />
+        </g>
+        <g class="ring ring-2" stroke="rgba(255,43,214,0.4)" fill="none" stroke-width="1">
+          <rect x="40" y="40" width="320" height="320" rx="20" />
+          <rect x="80" y="80" width="240" height="240" rx="14" stroke-dasharray="2 6" />
+        </g>
+      </svg>
+    </div>
+  </aside>
+
+  <section class="auth-panel">
+    <div class="auth-card glass">
+      <div class="eyebrow">Get started</div>
+      <h2>Create account</h2>
+      <p class="auth-sub">Pick a username and password. You can sign in right after.</p>
+
+      <form method="POST" action="{{ url_for('register') }}" id="register-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required autofocus minlength="3"
+            placeholder="e.g. alex" />
+        </div>
+
+        <div class="field">
+          <label for="name">Full name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required placeholder="e.g. Prajwal Rao" />
+        </div>
+
+        <div class="field">
+          <label for="usn">USN</label>
+          <input id="usn" name="usn" type="text" autocomplete="off" required placeholder="e.g. 1AB21CS001" />
+        </div>
+
+        <div class="field">
+          <label for="class_name">Class / Section</label>
+          <input id="class_name" name="class_name" type="text" autocomplete="off"
+            placeholder="e.g. CS-A, 3rd Sem" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6"
+            placeholder="At least 6 characters" />
+          <div class="strength" id="strength">
+            <span class="s-on-1"></span><span class="s-on-2"></span><span class="s-on-3"></span><span
+              class="s-on-4"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirm">Confirm password</label>
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6"
+            placeholder="Repeat password" />
+        </div>
+
+        <hr>
+
+        <h3>Face Registration</h3>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:0.75rem;">
+          We'll take 5 samples and average them for accurate recognition.
+          Ensure good lighting and look directly at the camera.
+        </p>
+
+        <video id="video" autoplay playsinline muted width="100%" style="
+       border-radius:12px;
+       border:1px solid #444;"
+        ></video>
+
+        <canvas id="canvas" style="display:none;"></canvas>
+
+        <!-- Capture progress bar -->
+        <div class="capture-progress-wrap" style="margin:0.75rem 0;display:none;" id="progressWrap">
+          <div class="capture-progress-bar" id="capture-progress" style="width:0%;height:6px;background:var(--accent);border-radius:4px;transition:width 0.3s;"></div>
+        </div>
+
+        <button type="button" id="capture-btn" class="btn btn-secondary">
+          📷 Capture Face (5 samples)
+        </button>
+
+        <p id="capture-status" style="margin-top:0.5rem;font-size:0.9rem;">
+          Face not captured
+        </p>
+
+        <input type="hidden" id="face_descriptor" name="face_descriptor">
+        <input type="hidden" id="face_image" name="face_image">
+
+        <br>
+
+        <button type="submit" class="btn btn-primary auth-submit">
+          Create Account →
+        </button>
+      </form>
+
+      <div class="auth-foot">
+        Already have one? <a href="{{ url_for('login') }}">Sign in</a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+<script src="{{ url_for('static',
+filename='js/register_face.js') }}"></script>
+
+<script src="{{ url_for('static',
+filename='js/auth.js') }}"></script>
+
+{% endblock %}

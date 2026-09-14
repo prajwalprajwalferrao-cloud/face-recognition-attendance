@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}History · FaceTrack{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Detection History</h2>
+    <p class="auth-sub">Every recognized face, most recent first.</p>
+</div>
+
+<div class="card glass" style="padding: 24px; margin-top: 16px;">
+    {% if rows %}
+    <table class="history-table" style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align:left; border-bottom: 1px solid rgba(255,255,255,0.15);">
+                <th style="padding: 10px;">Member</th>
+                <th style="padding: 10px;">Confidence</th>
+                <th style="padding: 10px;">Detected At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in rows %}
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <td style="padding: 10px;">{{ r.name or r.username }}</td>
+                <td style="padding: 10px;">
+                    {{ "%.1f"|format(r.confidence * 100) if r.confidence is not none else '—' }}%
+                </td>
+                <td style="padding: 10px;">
+                    {{ r.detected_at[:16].replace(' ', ' · ') if r.detected_at else '—' }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No detections recorded yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

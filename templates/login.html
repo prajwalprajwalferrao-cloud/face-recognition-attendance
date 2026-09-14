@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}Sign in · FaceTrack{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  <aside class="auth-hero">
+    <div class="auth-hero-content">
+      <div class="brand-top">
+        <span class="brand-dot"></span>
+        <span>FaceTrack</span>
+      </div>
+      <h1>Recognition that runs in your browser.</h1>
+      <p>
+        A modern, privacy-friendly face attendance system.
+        Sign in to detect members in real time, register new faces,
+        and manage your roster — all from one dashboard.
+      </p>
+    </div>
+
+    <div class="auth-hero-bullets">
+      <div class="bullet">
+        <span class="bullet-mark">01</span>
+        Live camera with face detection overlays
+      </div>
+      <div class="bullet">
+        <span class="bullet-mark">02</span>
+        One-click face capture &amp; member registration
+      </div>
+      <div class="bullet">
+        <span class="bullet-mark">03</span>
+        Encrypted credentials, stored locally in SQLite
+      </div>
+    </div>
+
+    <!-- Decorative animated face-mesh illustration -->
+    <div class="auth-face-art" aria-hidden="true">
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="g2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ff2bd6" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#ff2bd6" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="180" fill="url(#g1)"/>
+        <circle cx="220" cy="180" r="140" fill="url(#g2)"/>
+        <g class="ring" stroke="rgba(0,245,255,0.45)" fill="none" stroke-width="1">
+          <circle cx="200" cy="200" r="160"/>
+          <circle cx="200" cy="200" r="120" stroke-dasharray="4 6"/>
+          <circle cx="200" cy="200" r="80" stroke-dasharray="2 8"/>
+        </g>
+        <g class="ring ring-2" stroke="rgba(255,43,214,0.4)" fill="none" stroke-width="1">
+          <ellipse cx="200" cy="200" rx="170" ry="60"/>
+          <ellipse cx="200" cy="200" rx="170" ry="60" transform="rotate(60 200 200)"/>
+          <ellipse cx="200" cy="200" rx="170" ry="60" transform="rotate(120 200 200)"/>
+        </g>
+        <g class="ring ring-3" stroke="rgba(255,255,255,0.18)" fill="none" stroke-width="1">
+          <line x1="20" y1="200" x2="380" y2="200"/>
+          <line x1="200" y1="20" x2="200" y2="380"/>
+          <line x1="60" y1="60" x2="340" y2="340"/>
+          <line x1="60" y1="340" x2="340" y2="60"/>
+        </g>
+      </svg>
+    </div>
+  </aside>
+
+  <section class="auth-panel">
+    <div class="auth-card glass">
+      <div class="eyebrow">Welcome back</div>
+      <h2>Sign in</h2>
+      <p class="auth-sub">Enter your credentials to access the dashboard.</p>
+
+      <form method="POST" action="{{ url_for('login') }}" id="login-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username"
+                 required autofocus placeholder="e.g. alex" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password"
+                 required placeholder="••••••••" />
+        </div>
+
+        <button type="submit" class="btn btn-primary auth-submit">Sign in →</button>
+      </form>
+
+      <div class="auth-foot">
+        New here? <a href="{{ url_for('register') }}">Create a student account</a>
+      </div>
+
+      <div class="role-hint-box">
+        <p class="role-hint-title">🔐 Default Admin Login</p>
+        <div class="role-hint-row">
+          <span>Username:</span><code>admin</code>
+        </div>
+        <div class="role-hint-row">
+          <span>Password:</span><code>admin123</code>
+        </div>
+        <p class="role-hint-note">Change after first login. Teachers are created by admin.</p>
+      </div>
+
+    </div>
+  </section>
+</div>
+{% endblock %}

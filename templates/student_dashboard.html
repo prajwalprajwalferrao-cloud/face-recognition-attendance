@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}My Attendance · FaceTrack{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="portal-page">
+
+  <!-- ── Header ── -->
+  <div class="portal-header">
+    <div>
+      <h1 class="portal-title">📊 My Attendance</h1>
+      <p class="portal-sub">Your personal attendance record.</p>
+    </div>
+    <a href="{{ url_for('detect') }}" class="btn btn-primary">
+      📷 Check In Now
+    </a>
+  </div>
+
+  <!-- ── Profile + summary ── -->
+  <div class="student-top-row">
+    <div class="glass student-profile-card">
+      {% if user.face_image %}
+      <img src="{{ user.face_image }}" class="student-face-img" alt="Profile photo" />
+      {% else %}
+      <div class="student-face-placeholder">{{ (user.name or 'S')[0]|upper }}</div>
+      {% endif %}
+      <div class="student-info">
+        <h2>{{ user.name }}</h2>
+        <p class="student-meta">USN: <strong>{{ user.usn or 'N/A' }}</strong></p>
+        <p class="student-meta">Class: <strong>{{ user.class_name or 'N/A' }}</strong></p>
+      </div>
+    </div>
+
+    <div class="student-stats-col">
+      <!-- Circular progress -->
+      <div class="glass attendance-ring-card">
+        <div class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle class="ring-fill"
+                    cx="60" cy="60" r="52"
+                    stroke-dasharray="{{ (percentage / 100) * 327 | round(1) }} 327"
+                    style="stroke: {% if percentage >= 75 %}#3ee6d0{% elif percentage >= 50 %}#f0a500{% else %}#e8556b{% endif %};" />
+          </svg>
+          <div class="ring-text">
+            <span class="ring-pct">{{ percentage }}%</span>
+            <span class="ring-lbl">Attendance</span>
+          </div>
+        </div>
+        <p class="ring-detail">{{ present_days }} / {{ total_days }} days present</p>
+        {% if percentage < 75 %}
+        <p class="ring-warn">⚠️ Below 75% — at risk</p>
+        {% elif percentage >= 90 %}
+        <p class="ring-good">🎉 Excellent attendance!</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Attendance log ── -->
+  <div class="glass portal-card">
+    <div class="portal-card-header">
+      <h2>Attendance History</h2>
+      <span class="muted-label">Most recent first</span>
+    </div>
+
+    {% if records %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Time Marked</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+          <tr class="row-present">
+            <td>{{ loop.index }}</td>
+            <td>{{ r.attendance_date }}</td>
+            <td>
+              {% set days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+              {# Python date weekday parsing via jinja2 is limited; show date only #}
+              {{ r.attendance_date }}
+            </td>
+            <td>{{ r.marked_at[11:16] if r.marked_at else '—' }}</td>
+            <td><span class="status-badge present">✅ Present</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p>No attendance records yet.</p>
+      <a href="{{ url_for('detect') }}" class="btn btn-primary" style="margin-top:1rem;">
+        📷 Check In Now
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

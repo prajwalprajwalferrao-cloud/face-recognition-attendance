@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Create Teacher · FaceTrack Admin{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  <aside class="auth-hero">
+    <div class="auth-hero-content">
+      <div class="brand-top">
+        <span class="brand-dot"></span>
+        <span>FaceTrack Admin</span>
+      </div>
+      <h1>Create a Teacher Account</h1>
+      <p>
+        Teacher accounts can view attendance records for any date and download
+        CSV reports. They cannot register students or modify system settings.
+      </p>
+    </div>
+    <div class="auth-hero-bullets">
+      <div class="bullet">
+        <span class="bullet-mark">A</span>
+        Teachers can view daily attendance tables
+      </div>
+      <div class="bullet">
+        <span class="bullet-mark">B</span>
+        Export attendance as CSV per day
+      </div>
+      <div class="bullet">
+        <span class="bullet-mark">C</span>
+        No access to admin settings
+      </div>
+    </div>
+    <div class="auth-face-art" aria-hidden="true">
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7a5cff" stop-opacity="0.5" />
+            <stop offset="100%" stop-color="#7a5cff" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="190" fill="url(#rg1)" />
+        <g stroke="rgba(122,92,255,0.4)" fill="none" stroke-width="1">
+          <circle cx="200" cy="200" r="160" />
+          <circle cx="200" cy="200" r="110" stroke-dasharray="3 7" />
+        </g>
+      </svg>
+    </div>
+  </aside>
+
+  <section class="auth-panel">
+    <div class="auth-card glass">
+      <div class="eyebrow">Admin · Create Account</div>
+      <h2>New Teacher</h2>
+      <p class="auth-sub">This account will have the <strong>teacher</strong> role.</p>
+
+      <form method="POST" action="{{ url_for('admin_create_teacher') }}">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" required autofocus
+                 placeholder="e.g. prof_sharma" />
+        </div>
+
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" required
+                 placeholder="e.g. Dr. Priya Sharma" />
+        </div>
+
+        <div class="field">
+          <label for="class_name">Class / Subject (optional)</label>
+          <input id="class_name" name="class_name" type="text"
+                 placeholder="e.g. CS-A, Mathematics" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required minlength="6"
+                 placeholder="At least 6 characters" />
+        </div>
+
+        <button type="submit" class="btn btn-primary auth-submit">
+          Create Teacher Account →
+        </button>
+      </form>
+
+      <div class="auth-foot">
+        <a href="{{ url_for('admin_dashboard') }}">← Back to Admin Dashboard</a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

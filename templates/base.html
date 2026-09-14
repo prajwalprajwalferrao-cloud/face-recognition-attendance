@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}FaceTrack Attendance{% endblock %}</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <!-- Animated background -->
+  <div class="bg-mesh" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <!-- Top nav (only when logged in) -->
+  {% if session.user_id %}
+  <nav class="topbar">
+    <a class="brand" href="{{ url_for('portal_redirect') }}">
+      <span class="brand-dot"></span>
+      <span class="brand-text">FaceTrack</span>
+    </a>
+
+    <div class="topbar-links">
+
+      {% if session.role == 'admin' %}
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+          🛡️ Admin
+        </a>
+        <a href="{{ url_for('teacher_dashboard') }}"
+           class="nav-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}">
+          Attendance
+        </a>
+        <a href="{{ url_for('detect') }}"
+           class="nav-link {% if request.endpoint == 'detect' %}active{% endif %}">
+          Detect
+        </a>
+        <a href="{{ url_for('members') }}"
+           class="nav-link {% if request.endpoint == 'members' %}active{% endif %}">
+          Members
+        </a>
+
+      {% elif session.role == 'teacher' %}
+        <a href="{{ url_for('teacher_dashboard') }}"
+           class="nav-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}">
+          📋 Attendance
+        </a>
+        <a href="{{ url_for('detect') }}"
+           class="nav-link {% if request.endpoint == 'detect' %}active{% endif %}">
+          Detect
+        </a>
+
+      {% else %}
+        <a href="{{ url_for('student_dashboard') }}"
+           class="nav-link {% if request.endpoint == 'student_dashboard' %}active{% endif %}">
+          My Attendance
+        </a>
+        <a href="{{ url_for('detect') }}"
+           class="nav-link {% if request.endpoint == 'detect' %}active{% endif %}">
+          Check In
+        </a>
+      {% endif %}
+
+    </div>
+
+    <div class="topbar-right">
+      <span class="user-pill">
+        <span class="user-avatar">{{ (session.username or 'U')[0]|upper }}</span>
+        <span>{{ session.name or session.username }}</span>
+        <span class="role-badge role-{{ session.role }}">{{ session.role }}</span>
+      </span>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost">Logout</a>
+    </div>
+  </nav>
+  {% endif %}
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-container">
+    {% for category, msg in messages %}
+    <div class="flash flash-{{ category }}">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <main class="page">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  {% block scripts %}{% endblock %}
+</body>
+
+</html>

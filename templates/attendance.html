@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Attendance
+{% endblock %}
+
+{% block content %}
+
+<div class="glass attendance-summary">
+  <div>
+    <h2>Attendance</h2>
+    <p class="attendance-date">{{ today }}</p>
+  </div>
+  <div class="attendance-stat">
+    <span class="attendance-stat-num">{{ present_count }}</span>
+    <span class="attendance-stat-label">/ {{ total_count }} present</span>
+  </div>
+</div>
+
+<div class="glass attendance-list-card">
+  {% if attendance_list %}
+  <table class="attendance-table">
+    <thead>
+      <tr>
+        <th>Photo</th>
+        <th>Name</th>
+        <th>USN</th>
+        <th>Status</th>
+        <th>Marked at</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for person in attendance_list %}
+      <tr class="{{ 'present' if person.is_present else 'absent' }}">
+        <td>
+          <img class="attendance-avatar"
+            src="{{ person.face_image if person.face_image else '/static/img/unknown-placeholder.png' }}"
+            alt="{{ person.name }}">
+        </td>
+        <td>{{ person.name }}</td>
+        <td>{{ person.usn or '—' }}</td>
+        <td>
+          {% if person.is_present %}
+          <span class="status-badge present">Present</span>
+          {% else %}
+          <span class="status-badge absent">Absent</span>
+          {% endif %}
+        </td>
+        <td>{{ person.marked_at or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="attendance-empty">No registered members yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Face Detection
+{% endblock %}
+
+{% block content %}
+
+<div class="page">
+    <div class="detect-grid">
+
+        <div class="glass video-card">
+            <h2>Face Recognition</h2>
+            <div class="video-frame">
+                <video id="video" autoplay muted playsinline></video>
+                <canvas id="overlay"></canvas>
+                <div class="video-corner tl"></div>
+                <div class="video-corner tr"></div>
+                <div class="video-corner bl"></div>
+                <div class="video-corner br"></div>
+            </div>
+            <h3 id="result">Waiting for face...</h3>
+        </div>
+
+        <div class="glass result-panel" id="resultPanel" style="display: none;">
+            <h2>Match Found</h2>
+            <div class="result-photo-wrap" id="resultPhotoWrap">
+                <img id="resultPhoto" src="" alt="Detected face">
+            </div>
+            <h3 class="result-name" id="resultName"></h3>
+        </div>
+
+    </div>
+
+    <div class="glass recent-activity">
+        <h2>Recent Activity</h2>
+        <div class="recent-list" id="recentList"></div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+<script src="{{ url_for(
+    'static',
+    filename='js/detect.js'
+) }}"></script>
+
+{% endblock %}

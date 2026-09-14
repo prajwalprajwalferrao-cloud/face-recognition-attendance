@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Members · FaceTrack{% endblock %}
+
+{% block content %}
+<div class="members-header">
+  <div>
+    <div class="eyebrow">Your Roster</div>
+    <h1>Registered Members</h1>
+    <p class="muted">
+      {{ members|length }} member{{ '' if members|length == 1 else 's' }} with face data stored locally.
+    </p>
+  </div>
+  <a href="{{ url_for('register') }}" class="btn btn-primary">
+    + Register Member
+  </a>
+</div>
+
+{% if members %}
+<div class="member-grid">
+  {% for m in members %}
+  <article class="glass member-card" data-id="{{ m.id }}">
+    <div class="member-avatar">
+      {% if m.face_image %}
+      <img src="{{ m.face_image }}" alt="Face of {{ m.name }}" />
+      {% else %}
+      <span class="initial">{{ m.name[0]|upper }}</span>
+      {% endif %}
+    </div>
+
+    <div>
+      <h3 class="member-name">{{ m.name }}</h3>
+      {% if m.role %}<span class="member-role">{{ m.role }}</span>{% endif %}
+    </div>
+    <div class="member-meta">
+
+      <div class="row">
+        <span class="icon">🕒</span>
+        <span>
+          Last Seen:
+          {{ m.last_seen or 'Never' }}
+        </span>
+      </div>
+
+      <div class="row">
+        <span class="icon">📊</span>
+        <span>
+          Total Detections:
+          {{ m.total_detection }}
+        </span>
+      </div>
+
+    </div>
+
+    <div class="member-foot">
+      <span class="timestamp" title="{{ m.last_seen or 'Never' }}">
+        {{ m.last_seen[:16].replace(' ', ' · ') if m.last_seen else 'Never' }}
+      </span>
+      <button class="btn btn-ghost btn-sm" data-action="delete" data-id="{{ m.id }}" data-name="{{ m.name }}">
+        Delete
+      </button>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="glass empty-state">
+  <span class="emoji">📷</span>
+  <h2>No members yet</h2>
+  <p class="muted">Head to the dashboard to capture your first face and add it to the roster.</p>
+  <divstyle="margin-top:18px;">
+    <a href="{{ url_for('register') }}" class="btn btn-primary">
+      Register Member →
+    </a>
+</div>
+</div>
+{% endif %}
+
+<!-- Confirm-delete modal -->
+<div class="modal-backdrop" id="confirm-modal" role="dialog" aria-modal="true">
+  <div class="glass modal">
+    <h3>Delete member?</h3>
+    <p>This will permanently remove <strong id="confirm-name"></strong> and their face data.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="cancel">Cancel</button>
+      <button class="btn btn-danger" data-action="confirm">Delete</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/members.js') }}"></script>
+{% endblock %}
