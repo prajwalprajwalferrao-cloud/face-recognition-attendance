@@ -1,0 +1,39 @@
+# ────────────────────────────────────────────────────────────────
+# .gitignore  —  Face Recognition Attendance System
+# ────────────────────────────────────────────────────────────────
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Database (ephemeral on Vercel — never commit production data)
+database.db
+*.db
+*.sqlite3
+
+# Captured face snapshots (personal biometric data — never commit)
+static/captures/
+!static/captures/.gitkeep
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Vercel
+.vercel/

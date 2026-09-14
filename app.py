@@ -36,10 +36,26 @@ from werkzeug.security import (
 _PASSWORD_METHOD = "pbkdf2:sha256"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "database.db")
 
-CAPTURES_DIR = os.path.join(BASE_DIR, "static", "captures")
-os.makedirs(CAPTURES_DIR, exist_ok=True)
+# ── Vercel-safe paths ────────────────────────────────────────────────────────
+# Vercel's function filesystem is read-only EXCEPT for /tmp.
+# Locally BASE_DIR is writable, so we keep the same behaviour there.
+# VERCEL env var is set automatically on all Vercel deployments.
+_ON_VERCEL = os.environ.get("VERCEL") == "1"
+
+if _ON_VERCEL:
+    # /tmp is the only writable directory on Vercel serverless functions.
+    # Note: /tmp is ephemeral — data is lost between cold starts.
+    DB_PATH      = "/tmp/database.db"
+    CAPTURES_DIR = "/tmp/captures"
+else:
+    DB_PATH      = os.path.join(BASE_DIR, "database.db")
+    CAPTURES_DIR = os.path.join(BASE_DIR, "static", "captures")
+
+try:
+    os.makedirs(CAPTURES_DIR, exist_ok=True)
+except OSError:
+    pass  # read-only fs on Vercel — captures won't be saved, that's OK
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FACE_WEB_SECRET", "change-me-in-production")
@@ -129,7 +145,14 @@ def init_db():
     conn.close()
 
 
-init_db()
+# Guard init_db so a read-only filesystem (e.g. Vercel cold-start race) never
+# crashes the import.  On Vercel with /tmp this always succeeds.
+try:
+    init_db()
+except Exception as _db_err:
+    import warnings
+    warnings.warn(f"init_db() failed at import time: {_db_err}", RuntimeWarning)
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -167,6 +190,25 @@ def index():
     if "user_id" in session:
         return redirect(url_for("portal_redirect"))
     return redirect(url_for("login"))
+
+
+# ─────────────────────────────────────────────────────────────
+# HEALTH CHECK  (no DB / camera / model access)
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
+# ─────────────────────────────────────────────────────────────
+# FAVICON  (return empty 204 so browsers never crash the fn)
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/favicon.ico")
+@app.route("/favicon.png")
+def favicon():
+    return "", 204
 
 
 @app.route("/portal")
