@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FaceTrack AI — Intelligent Attendance System</title>
+  <meta name="description" content="AI-powered face recognition attendance system. Runs entirely in your browser. No server-side camera needed." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}" />
+</head>
+<body class="landing-body">
+
+  <!-- Animated background -->
+  <div class="bg-mesh" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <!-- ── NAV ──────────────────────────────────────────────── -->
+  <nav class="land-nav">
+    <a href="{{ url_for('landing') }}" class="land-nav-brand">
+      <span class="land-nav-dot"></span>
+      FaceTrack AI
+    </a>
+
+    <div class="land-nav-links">
+      <a href="#features"  class="land-nav-link">Features</a>
+      <a href="#how"       class="land-nav-link">How it works</a>
+      <a href="#roles"     class="land-nav-link">Roles</a>
+    </div>
+
+    <div class="land-nav-cta">
+      <a href="{{ url_for('login') }}"    class="lbtn lbtn-ghost">Sign in</a>
+      <a href="{{ url_for('register') }}" class="lbtn lbtn-primary">Get started →</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+    </div>
+
+    <div style="position:relative; z-index:2; width:100%;">
+      <div class="hero-content" style="margin: 0 auto;">
+
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          AI-Powered · Browser Native · Zero Server Camera
+        </div>
+
+        <h1 class="hero-title">
+          Attendance tracking<br>
+          powered by <span class="grad">facial recognition</span>
+        </h1>
+
+        <p class="hero-sub">
+          FaceTrack AI uses your browser's camera and on-device neural networks
+          to identify students in real time — no server hardware, no webcam on the backend,
+          100% private.
+        </p>
+
+        <div class="hero-btns">
+          <a href="{{ url_for('register') }}" class="lbtn lbtn-primary lbtn-lg">
+            Start for free →
+          </a>
+          <a href="{{ url_for('login') }}" class="lbtn lbtn-outline lbtn-lg">
+            Sign in
+          </a>
+        </div>
+      </div>
+
+      <!-- Face scan illustration -->
+      <div class="hero-visual">
+        <div class="face-scan-box">
+          <div class="scan-line"></div>
+          <span class="scan-corner tl"></span>
+          <span class="scan-corner tr"></span>
+          <span class="scan-corner bl"></span>
+          <span class="scan-corner br"></span>
+          <div class="scan-face-ring"></div>
+          <div class="scan-match-badge">
+            <span class="scan-dot-live"></span>
+            MATCH · 94%
+          </div>
+          <div class="scan-label">SSD MOBILENET V1 · LIVE DETECTION</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS BAR ─────────────────────────────────────────── -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-num">~94%</span>
+      <span class="stat-desc">Recognition accuracy</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">&lt;500ms</span>
+      <span class="stat-desc">Detection latency</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">0 MB</span>
+      <span class="stat-desc">Server camera usage</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">3</span>
+      <span class="stat-desc">Role-based portals</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">100%</span>
+      <span class="stat-desc">Browser-native AI</span>
+    </div>
+  </div>
+
+  <!-- ── FEATURES ──────────────────────────────────────────── -->
+  <section class="land-section" id="features">
+    <div class="section-badge">Core features</div>
+    <h2 class="section-title">Everything you need<br>for smart attendance</h2>
+    <p class="section-sub">
+      Built for institutions that care about speed, privacy, and ease of use.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-cyan">🧠</div>
+        <h3 class="feature-title">On-device AI inference</h3>
+        <p class="feature-desc">
+          SSD MobileNet V1 runs directly in the browser via face-api.js.
+          No frames leave your device for recognition.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-purple">⚡</div>
+        <h3 class="feature-title">Real-time detection</h3>
+        <p class="feature-desc">
+          500ms polling with landmark-based descriptor matching.
+          Shows name and confidence score live on the video feed.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-pink">🎭</div>
+        <h3 class="feature-title">Role-based access</h3>
+        <p class="feature-desc">
+          Three separate portals — Admin, Teacher, and Student — each
+          with exactly the right permissions.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-amber">📊</div>
+        <h3 class="feature-title">Attendance reports</h3>
+        <p class="feature-desc">
+          Teachers can filter by date, search students, and export
+          attendance as a CSV file in one click.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-green">🛡️</div>
+        <h3 class="feature-title">Secure auth</h3>
+        <p class="feature-desc">
+          PBKDF2-SHA256 hashed passwords, session-based auth, and
+          role-checked decorators on every protected route.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-red">📱</div>
+        <h3 class="feature-title">Student self-check-in</h3>
+        <p class="feature-desc">
+          Students can scan their own face to mark attendance and track
+          their personal attendance percentage with visual progress rings.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ───────────────────────────────────────── -->
+  <div class="how-section" id="how">
+    <div class="how-inner">
+      <div class="section-badge">How it works</div>
+      <h2 class="section-title">From camera to record<br>in under a second</h2>
+
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-num">01</div>
+          <h4 class="step-title">Register your face</h4>
+          <p class="step-desc">
+            The browser captures 5 face samples and computes an averaged
+            128-D descriptor. Stored securely as JSON.
+          </p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">02</div>
+          <h4 class="step-title">Open the detect page</h4>
+          <p class="step-desc">
+            Your webcam stream is processed locally every 500ms
+            by SSD MobileNet — no upload needed.
+          </p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">03</div>
+          <h4 class="step-title">Face is matched</h4>
+          <p class="step-desc">
+            Euclidean distance between live descriptor and registered
+            faces below 0.50 = recognised. Label shown instantly.
+          </p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">04</div>
+          <h4 class="step-title">Attendance recorded</h4>
+          <p class="step-desc">
+            A snapshot is saved, attendance is marked for today,
+            and the teacher's dashboard updates automatically.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROLES ─────────────────────────────────────────────── -->
+  <section class="land-section" id="roles">
+    <div class="section-badge">Access levels</div>
+    <h2 class="section-title">Three portals.<br>One system.</h2>
+    <p class="section-sub">
+      Each role sees only what they need — keeping the experience clean
+      and security tight.
+    </p>
+
+    <div class="roles-grid">
+      <!-- Admin -->
+      <div class="role-card rc-admin">
+        <span class="rc-icon">🛡️</span>
+        <span class="rc-label">Admin</span>
+        <h3 class="rc-title">System Administrator</h3>
+        <p class="rc-desc">Full control over users, roles, and the entire platform.</p>
+        <ul class="rc-perms">
+          <li>Create and manage teacher accounts</li>
+          <li>Assign roles and class sections</li>
+          <li>View all members and detections</li>
+          <li>Delete users and reset data</li>
+          <li>Access all portals</li>
+        </ul>
+      </div>
+
+      <!-- Teacher -->
+      <div class="role-card rc-teacher">
+        <span class="rc-icon">👩‍🏫</span>
+        <span class="rc-label">Teacher</span>
+        <h3 class="rc-title">Class Teacher</h3>
+        <p class="rc-desc">View and export daily attendance for their class.</p>
+        <ul class="rc-perms">
+          <li>View attendance by date</li>
+          <li>Search by name, USN, class</li>
+          <li>Export CSV attendance report</li>
+          <li>Access live detection page</li>
+        </ul>
+      </div>
+
+      <!-- Student -->
+      <div class="role-card rc-student">
+        <span class="rc-icon">🎓</span>
+        <span class="rc-label">Student</span>
+        <h3 class="rc-title">Student</h3>
+        <p class="rc-desc">Self-register and track your own attendance progress.</p>
+        <ul class="rc-perms">
+          <li>Register face from browser</li>
+          <li>Self check-in via camera</li>
+          <li>View personal attendance %</li>
+          <li>See full attendance history</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ───────────────────────────────────────────────── -->
+  <section class="cta-section">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title">Ready to automate attendance?</h2>
+      <p class="cta-sub">
+        Create your student account in 60 seconds. No credit card,
+        no server setup, no hardware — just your browser camera.
+      </p>
+      <div class="cta-btns">
+        <a href="{{ url_for('register') }}" class="lbtn lbtn-primary lbtn-lg">
+          Create free account →
+        </a>
+        <a href="{{ url_for('login') }}" class="lbtn lbtn-ghost lbtn-lg">
+          Sign in
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────── -->
+  <footer class="land-footer">
+    <a href="{{ url_for('landing') }}" class="foot-brand">
+      <span class="land-nav-dot" style="width:8px;height:8px;"></span>
+      FaceTrack AI
+    </a>
+    <span class="foot-copy">© 2025 FaceTrack AI. Built with Flask + face-api.js</span>
+    <div class="foot-links">
+      <a href="{{ url_for('login') }}"    class="foot-link">Sign in</a>
+      <a href="{{ url_for('register') }}" class="foot-link">Register</a>
+      <a href="{{ url_for('health') }}"   class="foot-link">Status</a>
+    </div>
+  </footer>
+
+</body>
+</html>

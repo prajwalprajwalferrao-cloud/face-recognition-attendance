@@ -1,113 +1,132 @@
 {% extends 'base.html' %}
-{% block title %}Sign in · FaceTrack{% endblock %}
+{% block title %}Sign in · FaceTrack AI{% endblock %}
 {% block extra_css %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
 {% endblock %}
 
 {% block content %}
-<div class="auth-shell">
-  <aside class="auth-hero">
-    <div class="auth-hero-content">
-      <div class="brand-top">
-        <span class="brand-dot"></span>
-        <span>FaceTrack</span>
-      </div>
-      <h1>Recognition that runs in your browser.</h1>
-      <p>
-        A modern, privacy-friendly face attendance system.
-        Sign in to detect members in real time, register new faces,
-        and manage your roster — all from one dashboard.
-      </p>
-    </div>
+<div class="login-shell">
 
-    <div class="auth-hero-bullets">
-      <div class="bullet">
-        <span class="bullet-mark">01</span>
-        Live camera with face detection overlays
-      </div>
-      <div class="bullet">
-        <span class="bullet-mark">02</span>
-        One-click face capture &amp; member registration
-      </div>
-      <div class="bullet">
-        <span class="bullet-mark">03</span>
-        Encrypted credentials, stored locally in SQLite
-      </div>
-    </div>
+  <!-- Left: brand panel -->
+  <aside class="login-brand-panel" aria-hidden="true">
+    <div class="lbp-inner">
+      <a href="{{ url_for('landing') }}" class="lbp-logo">
+        <span class="lbp-dot"></span>
+        FaceTrack AI
+      </a>
 
-    <!-- Decorative animated face-mesh illustration -->
-    <div class="auth-face-art" aria-hidden="true">
-      <svg viewBox="0 0 400 400">
-        <defs>
-          <radialGradient id="g1" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.6"/>
-            <stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="g2" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ff2bd6" stop-opacity="0.5"/>
-            <stop offset="100%" stop-color="#ff2bd6" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <circle cx="200" cy="200" r="180" fill="url(#g1)"/>
-        <circle cx="220" cy="180" r="140" fill="url(#g2)"/>
-        <g class="ring" stroke="rgba(0,245,255,0.45)" fill="none" stroke-width="1">
-          <circle cx="200" cy="200" r="160"/>
-          <circle cx="200" cy="200" r="120" stroke-dasharray="4 6"/>
-          <circle cx="200" cy="200" r="80" stroke-dasharray="2 8"/>
-        </g>
-        <g class="ring ring-2" stroke="rgba(255,43,214,0.4)" fill="none" stroke-width="1">
-          <ellipse cx="200" cy="200" rx="170" ry="60"/>
-          <ellipse cx="200" cy="200" rx="170" ry="60" transform="rotate(60 200 200)"/>
-          <ellipse cx="200" cy="200" rx="170" ry="60" transform="rotate(120 200 200)"/>
-        </g>
-        <g class="ring ring-3" stroke="rgba(255,255,255,0.18)" fill="none" stroke-width="1">
-          <line x1="20" y1="200" x2="380" y2="200"/>
-          <line x1="200" y1="20" x2="200" y2="380"/>
-          <line x1="60" y1="60" x2="340" y2="340"/>
-          <line x1="60" y1="340" x2="340" y2="60"/>
-        </g>
-      </svg>
+      <!-- Animated face scan -->
+      <div class="lbp-visual">
+        <div class="lbp-scan-ring lbp-ring-1"></div>
+        <div class="lbp-scan-ring lbp-ring-2"></div>
+        <div class="lbp-scan-ring lbp-ring-3"></div>
+        <div class="lbp-face-outline"></div>
+        <div class="lbp-scan-line"></div>
+        <div class="lbp-node lbp-n1"></div>
+        <div class="lbp-node lbp-n2"></div>
+        <div class="lbp-node lbp-n3"></div>
+        <div class="lbp-node lbp-n4"></div>
+        <div class="lbp-node lbp-n5"></div>
+      </div>
+
+      <div class="lbp-text">
+        <h2>Intelligent attendance<br>for modern classrooms</h2>
+        <p>SSD MobileNet V1 · face-api.js · 500ms detection</p>
+      </div>
+
+      <div class="lbp-features">
+        <div class="lbp-feat"><span class="lbp-check">✓</span> Browser-native AI — no server camera</div>
+        <div class="lbp-feat"><span class="lbp-check">✓</span> Role-based: Admin · Teacher · Student</div>
+        <div class="lbp-feat"><span class="lbp-check">✓</span> Export attendance as CSV instantly</div>
+      </div>
     </div>
   </aside>
 
-  <section class="auth-panel">
-    <div class="auth-card glass">
-      <div class="eyebrow">Welcome back</div>
-      <h2>Sign in</h2>
-      <p class="auth-sub">Enter your credentials to access the dashboard.</p>
+  <!-- Right: login form -->
+  <section class="login-form-panel">
+    <div class="lfp-inner">
 
-      <form method="POST" action="{{ url_for('login') }}" id="login-form">
-        <div class="field">
-          <label for="username">Username</label>
-          <input id="username" name="username" type="text" autocomplete="username"
-                 required autofocus placeholder="e.g. alex" />
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+        <div class="lf-flash lf-flash-{{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <div class="lf-eyebrow">Welcome back</div>
+      <h1 class="lf-title">Sign in</h1>
+      <p class="lf-sub">Enter your credentials to access your portal.</p>
+
+      <form method="POST" action="{{ url_for('login') }}" class="lf-form" autocomplete="on">
+
+        <div class="lf-field">
+          <label for="username" class="lf-label">Username</label>
+          <div class="lf-input-wrap">
+            <span class="lf-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </span>
+            <input id="username" name="username" type="text"
+                   autocomplete="username" required autofocus
+                   placeholder="your username" class="lf-input" />
+          </div>
         </div>
 
-        <div class="field">
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password"
-                 required placeholder="••••••••" />
+        <div class="lf-field">
+          <label for="password" class="lf-label">Password</label>
+          <div class="lf-input-wrap">
+            <span class="lf-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input id="password" name="password" type="password"
+                   autocomplete="current-password" required
+                   placeholder="••••••••" class="lf-input" />
+            <button type="button" class="lf-eye" onclick="togglePwd()" aria-label="Toggle password">
+              <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <button type="submit" class="btn btn-primary auth-submit">Sign in →</button>
+        <button type="submit" class="lf-submit">
+          Sign in
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
       </form>
 
-      <div class="auth-foot">
-        New here? <a href="{{ url_for('register') }}">Create a student account</a>
-      </div>
+      <div class="lf-divider"><span>New to FaceTrack?</span></div>
 
-      <div class="role-hint-box">
-        <p class="role-hint-title">🔐 Default Admin Login</p>
-        <div class="role-hint-row">
-          <span>Username:</span><code>admin</code>
-        </div>
-        <div class="role-hint-row">
-          <span>Password:</span><code>admin123</code>
-        </div>
-        <p class="role-hint-note">Change after first login. Teachers are created by admin.</p>
-      </div>
+      <a href="{{ url_for('register') }}" class="lf-register-btn">
+        Create a student account
+      </a>
+
+      <p class="lf-back">
+        <a href="{{ url_for('landing') }}">← Back to home</a>
+      </p>
 
     </div>
   </section>
 </div>
+
+<script>
+function togglePwd() {
+  const inp = document.getElementById('password');
+  const ico = document.getElementById('eye-icon');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    ico.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    inp.type = 'password';
+    ico.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+</script>
 {% endblock %}

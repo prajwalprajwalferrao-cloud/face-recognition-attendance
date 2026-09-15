@@ -182,6 +182,17 @@ def role_required(*roles):
 
 
 # ─────────────────────────────────────────────────────────────
+# LANDING PAGE
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/landing")
+def landing():
+    if "user_id" in session:
+        return redirect(url_for("portal_redirect"))
+    return render_template("landing.html")
+
+
+# ─────────────────────────────────────────────────────────────
 # HOME / PORTAL REDIRECT
 # ─────────────────────────────────────────────────────────────
 
@@ -189,7 +200,7 @@ def role_required(*roles):
 def index():
     if "user_id" in session:
         return redirect(url_for("portal_redirect"))
-    return redirect(url_for("login"))
+    return redirect(url_for("landing"))
 
 
 # ─────────────────────────────────────────────────────────────
