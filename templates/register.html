@@ -3,219 +3,116 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Create account · FaceTrack AI</title>
-  <meta name="description" content="Register your account and capture your 5-sample face profile for FaceTrack AI" />
+  <title>Create Account · FaceTrack AI</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
 
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
 </head>
 <body class="login-body">
 
-<div class="login-shell">
-
-  <!-- Left: Brand Panel -->
-  <aside class="login-brand-panel" aria-hidden="true">
-    <div class="lbp-inner">
-      <a href="{{ url_for('landing') }}" class="lbp-logo">
-        <div class="lbp-icon-box">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-        </div>
-        <span>FaceTrack <span style="color:#06b6d4; font-weight:800;">AI</span></span>
-      </a>
-
-      <!-- Animated Face Scan Visual -->
-      <div class="lbp-visual">
-        <div class="lbp-scan-ring lbp-ring-1"></div>
-        <div class="lbp-scan-ring lbp-ring-2"></div>
-        <div class="lbp-scan-ring lbp-ring-3"></div>
-        <div class="lbp-face-outline"></div>
-        <div class="lbp-scan-line"></div>
-        <div class="lbp-node lbp-n1"></div>
-        <div class="lbp-node lbp-n2"></div>
-        <div class="lbp-node lbp-n3"></div>
-        <div class="lbp-node lbp-n4"></div>
-        <div class="lbp-node lbp-n5"></div>
-      </div>
-
-      <div class="lbp-text">
-        <h2>Set up your profile<br>in seconds</h2>
-        <p>128-D Vector Embedding · 5-Sample Averaging</p>
-      </div>
-
-      <div class="lbp-features">
-        <div class="lbp-feat"><span class="lbp-check">✓</span> 5 fast face snapshots for high baseline accuracy</div>
-        <div class="lbp-feat"><span class="lbp-check">✓</span> Encrypted credentials (PBKDF2-SHA256)</div>
-        <div class="lbp-feat"><span class="lbp-check">✓</span> 100% On-Device AI — webcam feed stays in browser</div>
-      </div>
+  <div class="auth-container" style="max-width: 480px;">
+    <div class="auth-brand">
+      <a href="{{ url_for('landing') }}">FaceTrack <span>AI</span></a>
     </div>
-  </aside>
 
-  <!-- Right: Registration Form -->
-  <section class="login-form-panel" style="padding: 40px 32px; overflow-y: auto;">
-    <div class="lfp-inner" style="max-width: 440px;">
-
+    <div class="auth-card-clean">
       <!-- Flash messages -->
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, msg in messages %}
-        <div class="lf-flash lf-flash-{{ category }}">{{ msg }}</div>
+        <div style="padding:10px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:6px; font-size:0.88rem; margin-bottom:1.25rem;">
+          {{ msg }}
+        </div>
         {% endfor %}
       {% endif %}
       {% endwith %}
 
-      <div class="lf-eyebrow">Get Started</div>
-      <h1 class="lf-title">Create account</h1>
-      <p class="lf-sub">Fill in your details and capture your face profile.</p>
+      <h1 class="auth-title">Create account</h1>
+      <p class="auth-sub">Enter your details and capture your face profile.</p>
 
-      <form method="POST" action="{{ url_for('register') }}" id="register-form" class="lf-form" autocomplete="on">
+      <form method="POST" action="{{ url_for('register') }}" id="register-form" class="auth-form">
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required autofocus minlength="3" placeholder="Username" class="form-input" />
+        </div>
 
-        <!-- Username -->
-        <div class="lf-field">
-          <label for="username" class="lf-label">Username</label>
-          <div class="lf-input-wrap">
-            <span class="lf-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-              </svg>
-            </span>
-            <input id="username" name="username" type="text" autocomplete="username" required autofocus minlength="3"
-                   placeholder="e.g. alex" class="lf-input" />
+        <div class="form-group">
+          <label for="name" class="form-label">Full Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required placeholder="Full name" class="form-input" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label for="usn" class="form-label">USN / Roll No.</label>
+            <input id="usn" name="usn" type="text" autocomplete="off" required placeholder="USN" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="class_name" class="form-label">Class / Section</label>
+            <input id="class_name" name="class_name" type="text" autocomplete="off" placeholder="Section" class="form-input" />
           </div>
         </div>
 
-        <!-- Full Name -->
-        <div class="lf-field">
-          <label for="name" class="lf-label">Full Name</label>
-          <div class="lf-input-wrap">
-            <span class="lf-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
-            </span>
-            <input id="name" name="name" type="text" autocomplete="name" required
-                   placeholder="e.g. Prajwal Ferrao" class="lf-input" />
-          </div>
-        </div>
-
-        <!-- USN & Class Grid -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="lf-field">
-            <label for="usn" class="lf-label">USN / Roll No.</label>
-            <div class="lf-input-wrap">
-              <input id="usn" name="usn" type="text" autocomplete="off" required
-                     placeholder="1AB21CS001" class="lf-input" style="padding-left: 14px;" />
-            </div>
-          </div>
-
-          <div class="lf-field">
-            <label for="class_name" class="lf-label">Class / Section</label>
-            <div class="lf-input-wrap">
-              <input id="class_name" name="class_name" type="text" autocomplete="off"
-                     placeholder="CS-A, 3rd Sem" class="lf-input" style="padding-left: 14px;" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Password -->
-        <div class="lf-field">
-          <label for="password" class="lf-label">Password</label>
-          <div class="lf-input-wrap">
-            <span class="lf-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-            </span>
-            <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6"
-                   placeholder="At least 6 chars" class="lf-input" />
-          </div>
-          <div class="strength" id="strength" style="margin-top: 6px; margin-bottom: 0;">
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="At least 6 characters" class="form-input" />
+          <div class="strength" id="strength" style="margin-top:4px;">
             <span class="s-on-1"></span><span class="s-on-2"></span><span class="s-on-3"></span><span class="s-on-4"></span>
           </div>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="lf-field">
-          <label for="confirm" class="lf-label">Confirm Password</label>
-          <div class="lf-input-wrap">
-            <span class="lf-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </span>
-            <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6"
-                   placeholder="Repeat password" class="lf-input" />
-          </div>
+        <div class="form-group">
+          <label for="confirm" class="form-label">Confirm Password</label>
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="Repeat password" class="form-input" />
         </div>
 
-        <div class="lf-divider"><span>Face Profile Capture</span></div>
-
-        <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 10px;">
-          Look directly at the camera. We'll capture 5 fast snapshots to calculate your baseline embedding.
-        </p>
-
-        <!-- Video Container -->
-        <div style="position: relative; border-radius: 14px; overflow: hidden; border: 1px solid rgba(6,182,212,0.3); background: #040812; aspect-ratio: 4/3; box-shadow: 0 8px 25px rgba(0,0,0,0.5);">
-          <video id="video" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block;"></video>
-          <div style="position: absolute; top: 12px; right: 12px; background: rgba(3,7,18,0.7); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; color: #06b6d4; font-family: monospace; font-weight: 600; border: 1px solid rgba(6,182,212,0.3);">
-            ● LIVE AI CAMERA
+        <div style="border-top:1px solid rgba(255,255,255,0.08); margin:8px 0; padding-top:12px;">
+          <label class="form-label" style="display:block; margin-bottom:6px;">Face Profile Capture</label>
+          
+          <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.12); background:#000; aspect-ratio:4/3; margin-bottom:10px;">
+            <video id="video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
           </div>
+
+          <canvas id="canvas" style="display:none;"></canvas>
+
+          <div class="capture-progress-wrap" style="margin: 6px 0; display: none;" id="progressWrap">
+            <div style="background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; height: 6px;">
+              <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: #3b82f6; border-radius: 99px; transition: width 0.3s;"></div>
+            </div>
+          </div>
+
+          <button type="button" id="capture-btn" style="width:100%; padding:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.88rem; font-weight:600; border-radius:8px; cursor:pointer;">
+            📷 Capture Face Profile (5 samples)
+          </button>
+
+          <p id="capture-status" style="margin: 6px 0 0; font-size: 0.8rem; color: #94a3b8; text-align: center;">
+            Face profile not captured yet
+          </p>
+
+          <input type="hidden" id="face_descriptor" name="face_descriptor">
+          <input type="hidden" id="face_image" name="face_image">
         </div>
 
-        <canvas id="canvas" style="display:none;"></canvas>
-
-        <!-- Progress Bar -->
-        <div class="capture-progress-wrap" style="margin: 10px 0; display: none;" id="progressWrap">
-          <div style="background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; height: 6px;">
-            <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #06b6d4, #6366f1); border-radius: 99px; transition: width 0.3s;"></div>
-          </div>
-        </div>
-
-        <!-- Capture Button -->
-        <button type="button" id="capture-btn" class="lf-register-btn" style="justify-content: center; width: 100%; background: rgba(6,182,212,0.08); border-color: rgba(6,182,212,0.35); color: #06b6d4; font-weight: 700; cursor: pointer;">
-          📷 Capture Face Profile (5 samples)
-        </button>
-
-        <p id="capture-status" style="margin: 8px 0 0; font-size: 0.82rem; color: #94a3b8; text-align: center;">
-          Face profile not captured yet
-        </p>
-
-        <input type="hidden" id="face_descriptor" name="face_descriptor">
-        <input type="hidden" id="face_image" name="face_image">
-
-        <button type="submit" class="lf-submit" style="margin-top: 14px;">
-          Create Account
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </button>
+        <button type="submit" class="btn-auth-primary">Create Account →</button>
       </form>
 
-      <div class="lf-divider"><span>Already registered?</span></div>
+      <div class="auth-footer">
+        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+      </div>
 
-      <a href="{{ url_for('login') }}" class="lf-register-btn">
-        Sign in to your portal
-      </a>
-
-      <p class="lf-back">
+      <div class="auth-back">
         <a href="{{ url_for('landing') }}">← Back to home</a>
-      </p>
-
+      </div>
     </div>
-  </section>
-</div>
+  </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-<script src="{{ url_for('static', filename='js/register_face.js') }}"></script>
-<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="{{ url_for('static', filename='js/register_face.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 
 </body>
 </html>
