@@ -8,11 +8,18 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
 </head>
 <body class="login-body">
+
+  <!-- Ambient Mesh Background Orbs -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-grid"></div>
+    <div class="aura-orb orb-1"></div>
+    <div class="aura-orb orb-2"></div>
+  </div>
 
   <div class="auth-container" style="max-width: 480px;">
     <div class="auth-brand">
@@ -24,7 +31,7 @@
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, msg in messages %}
-        <div style="padding:10px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:6px; font-size:0.88rem; margin-bottom:1.25rem;">
+        <div style="padding:10px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:8px; font-size:0.88rem; margin-bottom:1.25rem;">
           {{ msg }}
         </div>
         {% endfor %}
@@ -45,7 +52,7 @@
           <input id="name" name="name" type="text" autocomplete="name" required placeholder="Full name" class="form-input" />
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div class="form-group">
             <label for="usn" class="form-label">USN / Roll No.</label>
             <input id="usn" name="usn" type="text" autocomplete="off" required placeholder="USN" class="form-input" />
@@ -60,7 +67,7 @@
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
           <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="At least 6 characters" class="form-input" />
-          <div class="strength" id="strength" style="margin-top:4px;">
+          <div class="strength" id="strength" style="margin-top:6px;">
             <span class="s-on-1"></span><span class="s-on-2"></span><span class="s-on-3"></span><span class="s-on-4"></span>
           </div>
         </div>
@@ -70,26 +77,29 @@
           <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="Repeat password" class="form-input" />
         </div>
 
-        <div style="border-top:1px solid rgba(255,255,255,0.08); margin:8px 0; padding-top:12px;">
-          <label class="form-label" style="display:block; margin-bottom:6px;">Face Profile Capture</label>
+        <div style="border-top:1px solid rgba(255,255,255,0.08); margin:10px 0; padding-top:14px;">
+          <label class="form-label" style="display:block; margin-bottom:8px;">Face Profile Capture</label>
           
-          <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.12); background:#000; aspect-ratio:4/3; margin-bottom:10px;">
+          <div style="position:relative; border-radius:12px; overflow:hidden; border:1px solid rgba(6,182,212,0.35); background:#040812; aspect-ratio:4/3; margin-bottom:12px; box-shadow:0 8px 25px rgba(0,0,0,0.5);">
             <video id="video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
+            <div style="position:absolute; top:10px; right:10px; background:rgba(3,7,18,0.75); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.72rem; color:#06b6d4; font-family:monospace; font-weight:600; border:1px solid rgba(6,182,212,0.3);">
+              ● LIVE AI CAMERA
+            </div>
           </div>
 
           <canvas id="canvas" style="display:none;"></canvas>
 
-          <div class="capture-progress-wrap" style="margin: 6px 0; display: none;" id="progressWrap">
+          <div class="capture-progress-wrap" style="margin: 8px 0; display: none;" id="progressWrap">
             <div style="background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; height: 6px;">
-              <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: #3b82f6; border-radius: 99px; transition: width 0.3s;"></div>
+              <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #06b6d4, #6366f1); border-radius: 99px; transition: width 0.3s;"></div>
             </div>
           </div>
 
-          <button type="button" id="capture-btn" style="width:100%; padding:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:0.88rem; font-weight:600; border-radius:8px; cursor:pointer;">
+          <button type="button" id="capture-btn" style="width:100%; padding:11px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.35); color:#06b6d4; font-size:0.9rem; font-weight:700; border-radius:10px; cursor:pointer; transition:all 0.2s ease;">
             📷 Capture Face Profile (5 samples)
           </button>
 
-          <p id="capture-status" style="margin: 6px 0 0; font-size: 0.8rem; color: #94a3b8; text-align: center;">
+          <p id="capture-status" style="margin: 8px 0 0; font-size: 0.82rem; color: #94a3b8; text-align: center;">
             Face profile not captured yet
           </p>
 
@@ -97,7 +107,7 @@
           <input type="hidden" id="face_image" name="face_image">
         </div>
 
-        <button type="submit" class="btn-auth-primary">Create Account →</button>
+        <button type="submit" class="btn-auth-primary" style="margin-top: 14px;">Create Account →</button>
       </form>
 
       <div class="auth-footer">
