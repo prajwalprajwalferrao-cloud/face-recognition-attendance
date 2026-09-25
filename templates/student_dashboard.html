@@ -42,7 +42,7 @@
             <circle class="ring-fill"
                     cx="60" cy="60" r="52"
                     stroke-dasharray="{{ (percentage / 100) * 327 | round(1) }} 327"
-                    style="stroke: {% if percentage >= 75 %}#3ee6d0{% elif percentage >= 50 %}#f0a500{% else %}#e8556b{% endif %};" />
+                    style="stroke: {% if percentage >= 75 %}var(--neon-green){% elif percentage >= 50 %}var(--neon-amber){% else %}var(--danger){% endif %};" />
           </svg>
           <div class="ring-text">
             <span class="ring-pct">{{ percentage }}%</span>

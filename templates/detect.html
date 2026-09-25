@@ -1,41 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Face Detection
-{% endblock %}
+{% block title %}Live Face Detect · FaceTrack AI{% endblock %}
 
 {% block content %}
 
-<div class="page">
-    <div class="detect-grid">
+<div class="portal-page">
 
-        <div class="glass video-card">
-            <h2>Face Recognition</h2>
-            <div class="video-frame">
-                <video id="video" autoplay muted playsinline></video>
-                <canvas id="overlay"></canvas>
-                <div class="video-corner tl"></div>
-                <div class="video-corner tr"></div>
-                <div class="video-corner bl"></div>
-                <div class="video-corner br"></div>
-            </div>
-            <h3 id="result">Waiting for face...</h3>
-        </div>
+  <!-- Header -->
+  <div class="portal-header">
+    <div>
+      <h1 class="portal-title">📷 Live Face Scanner</h1>
+      <p class="portal-sub">Real-time biometric detection powered by SSD MobileNet V1.</p>
+    </div>
+    <a href="{{ url_for('portal_redirect') }}" class="btn btn-ghost">
+      ← Back to Portal
+    </a>
+  </div>
 
-        <div class="glass result-panel" id="resultPanel" style="display: none;">
-            <h2>Match Found</h2>
-            <div class="result-photo-wrap" id="resultPhotoWrap">
-                <img id="resultPhoto" src="" alt="Detected face">
-            </div>
-            <h3 class="result-name" id="resultName"></h3>
-        </div>
+  <div class="detect-grid">
 
+    <!-- Camera Viewport Card -->
+    <div class="glass video-card">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <h2 style="margin:0;">Webcam Viewport</h2>
+        <span class="status-badge present" style="font-family:var(--font-mono);">● 500ms ACTIVE SCAN</span>
+      </div>
+
+      <div class="video-frame">
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="overlay"></canvas>
+        <div class="video-corner tl"></div>
+        <div class="video-corner tr"></div>
+        <div class="video-corner bl"></div>
+        <div class="video-corner br"></div>
+      </div>
+
+      <h3 id="result">Initializing face detection engine…</h3>
     </div>
 
-    <div class="glass recent-activity">
-        <h2>Recent Activity</h2>
-        <div class="recent-list" id="recentList"></div>
+    <!-- Live Match Found Panel -->
+    <div class="glass result-panel" id="resultPanel" style="display: none;">
+      <h2>Match Identified</h2>
+      <div class="result-photo-wrap" id="resultPhotoWrap">
+        <img id="resultPhoto" src="" alt="Detected face">
+      </div>
+      <h3 class="result-name" id="resultName"></h3>
+      <span class="status-badge present">✅ Attendance Marked</span>
     </div>
+
+  </div>
+
+  <!-- Recent Detections Stream -->
+  <div class="glass recent-activity">
+    <div class="portal-card-header" style="border-bottom:none; padding:0 0 1rem 0; background:transparent;">
+      <h2 style="margin:0;">Recent System Activity</h2>
+      <span class="muted-label" style="font-family:var(--font-mono);">Real-Time Session Stream</span>
+    </div>
+    <div class="recent-list" id="recentList">
+      <p class="empty-state" style="padding:1rem 0;">No detections logged in this session yet.</p>
+    </div>
+  </div>
 
 </div>
 
@@ -43,10 +67,5 @@ Face Detection
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-
-<script src="{{ url_for(
-    'static',
-    filename='js/detect.js'
-) }}"></script>
-
+<script src="{{ url_for('static', filename='js/detect.js') }}"></script>
 {% endblock %}

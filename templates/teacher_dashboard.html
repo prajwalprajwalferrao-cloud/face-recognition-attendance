@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Teacher — Attendance · FaceTrack{% endblock %}
+{% block title %}Attendance Register · Teacher Portal{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -11,22 +11,22 @@
   <div class="portal-header">
     <div>
       <h1 class="portal-title">📋 Attendance Register</h1>
-      <p class="portal-sub">View and export attendance for any date.</p>
+      <p class="portal-sub">Daily verification roster and official CSV record generation.</p>
     </div>
     <a href="{{ url_for('teacher_export_csv', date=selected_date) }}"
-       class="btn btn-primary" id="exportBtn">
-      ⬇ Export CSV
+       class="btn btn-secondary" id="exportBtn">
+      ⬇ Export CSV Report
     </a>
   </div>
 
-  <!-- ── Date picker + stats ── -->
-  <div class="teacher-controls glass">
+  <!-- ── Date picker + Stat Counters Toolbar ── -->
+  <div class="teacher-controls">
     <form method="GET" action="{{ url_for('teacher_dashboard') }}" class="date-form">
       <label for="date-pick">Select Date</label>
       <input type="date" id="date-pick" name="date"
              value="{{ selected_date }}"
              max="{{ selected_date }}" />
-      <button type="submit" class="btn btn-outline">View</button>
+      <button type="submit" class="btn btn-sm btn-ghost">View Date</button>
     </form>
 
     <div class="mini-stats">
@@ -51,12 +51,12 @@
     </div>
   </div>
 
-  <!-- ── Attendance table ── -->
-  <div class="glass portal-card">
+  <!-- ── Student Attendance Table ── -->
+  <div class="portal-card">
     <div class="portal-card-header">
-      <h2>Students — {{ selected_date }}</h2>
+      <h2>Class Roster Log — <span class="data-mono" style="color:var(--neon-cyan);">{{ selected_date }}</span></h2>
       <input type="text" id="studentSearch" class="search-input"
-             placeholder="Search name, USN, class…" />
+             placeholder="Search student name, USN, section…" />
     </div>
 
     {% if attendance_list %}
@@ -65,18 +65,18 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Photo</th>
-            <th>Name</th>
+            <th>Profile</th>
+            <th>Student Name</th>
             <th>USN</th>
-            <th>Class</th>
-            <th>Status</th>
-            <th>Time Marked</th>
+            <th>Class / Section</th>
+            <th>Verification Status</th>
+            <th>Timestamp</th>
           </tr>
         </thead>
         <tbody>
           {% for s in attendance_list %}
           <tr class="{{ 'row-present' if s.is_present else 'row-absent' }}">
-            <td>{{ loop.index }}</td>
+            <td class="data-mono">{{ loop.index }}</td>
             <td>
               {% if s.face_image %}
               <img src="{{ s.face_image }}" class="thumb-img" alt="{{ s.name }}" />
@@ -84,9 +84,9 @@
               <div class="thumb-placeholder">{{ s.name[0]|upper }}</div>
               {% endif %}
             </td>
-            <td>{{ s.name }}</td>
+            <td style="font-weight:700; color:#fff;">{{ s.name }}</td>
             <td><code>{{ s.usn or '—' }}</code></td>
-            <td>{{ s.class_name or '—' }}</td>
+            <td class="data-mono">{{ s.class_name or '—' }}</td>
             <td>
               {% if s.is_present %}
               <span class="status-badge present">✅ Present</span>
@@ -94,7 +94,7 @@
               <span class="status-badge absent">❌ Absent</span>
               {% endif %}
             </td>
-            <td>{{ s.marked_at[11:16] if s.marked_at else '—' }}</td>
+            <td class="data-mono" style="color:var(--text-dim);">{{ s.marked_at[11:16] if s.marked_at else '—' }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -103,7 +103,7 @@
     {% else %}
     <div class="empty-state">
       <div class="empty-icon">📭</div>
-      <p>No students registered yet.</p>
+      <p>No student roster records found for {{ selected_date }}.</p>
     </div>
     {% endif %}
   </div>
@@ -119,7 +119,7 @@
     });
   });
 
-  // Update export CSV button date when date picker changes
+  // Update export CSV button date URL when date picker changes
   const datePick  = document.getElementById('date-pick');
   const exportBtn = document.getElementById('exportBtn');
   datePick.addEventListener('change', () => {

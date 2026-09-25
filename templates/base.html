@@ -4,38 +4,31 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block title %}FaceTrack Attendance{% endblock %}</title>
+  <title>{% block title %}FaceTrack AI — Biometric Identity Platform{% endblock %}</title>
 
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- App styles -->
+  <!-- App Styles System -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   {% block extra_css %}{% endblock %}
 </head>
 
 <body>
-  <!-- Animated background -->
-  <div class="bg-mesh" aria-hidden="true">
-    <span class="blob blob-1"></span>
-    <span class="blob blob-2"></span>
-    <span class="blob blob-3"></span>
-  </div>
+  <!-- Precision Ambient Grid Background -->
+  <div class="bg-mesh" aria-hidden="true"></div>
 
-  <!-- Top nav (only when logged in) -->
+  <!-- Topbar Navigation Header -->
   {% if session.user_id %}
   <nav class="topbar">
     <a class="brand" href="{{ url_for('portal_redirect') }}">
       <span class="brand-dot"></span>
-      <span class="brand-text">FaceTrack AI</span>
+      <span class="brand-text">FaceTrack <span style="color:var(--neon-cyan);">AI</span></span>
     </a>
 
     <div class="topbar-links">
-
       {% if session.role == 'admin' %}
         <a href="{{ url_for('admin_dashboard') }}"
            class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
@@ -43,38 +36,37 @@
         </a>
         <a href="{{ url_for('teacher_dashboard') }}"
            class="nav-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}">
-          Attendance
+          📋 Attendance
         </a>
         <a href="{{ url_for('detect') }}"
            class="nav-link {% if request.endpoint == 'detect' %}active{% endif %}">
-          Detect
+          📷 Detect
         </a>
         <a href="{{ url_for('members') }}"
            class="nav-link {% if request.endpoint == 'members' %}active{% endif %}">
-          Members
+          👥 Members
         </a>
 
       {% elif session.role == 'teacher' %}
         <a href="{{ url_for('teacher_dashboard') }}"
            class="nav-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}">
-          📋 Attendance
+          📋 Attendance Register
         </a>
         <a href="{{ url_for('detect') }}"
            class="nav-link {% if request.endpoint == 'detect' %}active{% endif %}">
-          Detect
+          📷 Live Detect
         </a>
 
       {% else %}
         <a href="{{ url_for('student_dashboard') }}"
            class="nav-link {% if request.endpoint == 'student_dashboard' %}active{% endif %}">
-          My Attendance
+          📊 My Attendance
         </a>
         <a href="{{ url_for('detect') }}"
            class="nav-link {% if request.endpoint == 'detect' %}active{% endif %}">
-          Check In
+          📷 Check In
         </a>
       {% endif %}
-
     </div>
 
     <div class="topbar-right">
@@ -83,12 +75,12 @@
         <span>{{ session.name or session.username }}</span>
         <span class="role-badge role-{{ session.role }}">{{ session.role }}</span>
       </span>
-      <a href="{{ url_for('logout') }}" class="btn btn-ghost">Logout</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm">Logout</a>
     </div>
   </nav>
   {% endif %}
 
-  <!-- Flash messages -->
+  <!-- Flash Messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   <div class="flash-container">
@@ -103,7 +95,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Toast container -->
+  <!-- Toast Container -->
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
   {% block scripts %}{% endblock %}

@@ -31,7 +31,7 @@
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, msg in messages %}
-        <div style="padding:10px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:8px; font-size:0.88rem; margin-bottom:1.25rem;">
+        <div style="padding:10px 14px; background:rgba(255,59,92,0.1); border:1px solid rgba(255,59,92,0.3); color:var(--danger, #ff3b5c); border-radius:var(--radius-sm, 6px); font-size:0.88rem; margin-bottom:1.25rem;">
           {{ msg }}
         </div>
         {% endfor %}
@@ -77,12 +77,12 @@
           <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="Repeat password" class="form-input" />
         </div>
 
-        <div style="border-top:1px solid rgba(255,255,255,0.08); margin:10px 0; padding-top:14px;">
+        <div style="border-top:1px solid var(--border-subtle, rgba(255,255,255,0.08)); margin:10px 0; padding-top:14px;">
           <label class="form-label" style="display:block; margin-bottom:8px;">Face Profile Capture</label>
           
-          <div style="position:relative; border-radius:12px; overflow:hidden; border:1px solid rgba(6,182,212,0.35); background:#040812; aspect-ratio:4/3; margin-bottom:12px; box-shadow:0 8px 25px rgba(0,0,0,0.5);">
+          <div style="position:relative; border-radius:var(--radius-md, 10px); overflow:hidden; border:1px solid rgba(0,245,255,0.35); background:var(--bg-0, #04070c); aspect-ratio:4/3; margin-bottom:12px; box-shadow:0 8px 25px rgba(0,0,0,0.5);">
             <video id="video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
-            <div style="position:absolute; top:10px; right:10px; background:rgba(3,7,18,0.75); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.72rem; color:#06b6d4; font-family:monospace; font-weight:600; border:1px solid rgba(6,182,212,0.3);">
+            <div style="position:absolute; top:10px; right:10px; background:rgba(3,7,18,0.75); backdrop-filter:blur(8px); padding:4px 10px; border-radius:var(--radius-sm, 6px); font-size:0.72rem; color:var(--neon-cyan, #00f5ff); font-family:'JetBrains Mono', monospace; font-weight:600; border:1px solid rgba(0,245,255,0.3);">
               ● LIVE AI CAMERA
             </div>
           </div>
@@ -91,15 +91,15 @@
 
           <div class="capture-progress-wrap" style="margin: 8px 0; display: none;" id="progressWrap">
             <div style="background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; height: 6px;">
-              <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #06b6d4, #6366f1); border-radius: 99px; transition: width 0.3s;"></div>
+              <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: var(--neon-cyan, #00f5ff); border-radius: 99px; transition: width 0.3s; box-shadow: 0 0 10px rgba(0,245,255,0.5);"></div>
             </div>
           </div>
 
-          <button type="button" id="capture-btn" style="width:100%; padding:11px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.35); color:#06b6d4; font-size:0.9rem; font-weight:700; border-radius:10px; cursor:pointer; transition:all 0.2s ease;">
+          <button type="button" id="capture-btn" style="width:100%; padding:11px; background:rgba(0,245,255,0.08); border:1px solid rgba(0,245,255,0.35); color:var(--neon-cyan, #00f5ff); font-family: 'Space Grotesk', sans-serif; font-size:0.9rem; font-weight:700; border-radius:var(--radius-sm, 6px); cursor:pointer; transition:all 0.2s ease;">
             📷 Capture Face Profile (5 samples)
           </button>
 
-          <p id="capture-status" style="margin: 8px 0 0; font-size: 0.82rem; color: #94a3b8; text-align: center;">
+          <p id="capture-status" style="margin: 8px 0 0; font-size: 0.82rem; color: var(--text-dim, #94a3b8); text-align: center; font-family: 'JetBrains Mono', monospace;">
             Face profile not captured yet
           </p>
 
