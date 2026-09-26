@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Attendance Log · Teacher Terminal{% endblock %}
+{% block title %}Teacher — Attendance · FaceTrack{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -10,54 +10,53 @@
   <!-- ── Header ── -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">Institutional Attendance Log</h1>
-      <p class="portal-sub">Daily verification roster and automated CSV record compilation.</p>
+      <h1 class="portal-title">📋 Attendance Register</h1>
+      <p class="portal-sub">View and export attendance for any date.</p>
     </div>
-    <a href="{{ url_for('teacher_export_csv', date=selected_date) }}" class="btn-sys" id="exportBtn">
-      EXTRACT LOG (CSV)
+    <a href="{{ url_for('teacher_export_csv', date=selected_date) }}"
+       class="btn btn-primary" id="exportBtn">
+      ⬇ Export CSV
     </a>
   </div>
 
-  <!-- ── Controls & Readouts ── -->
-  <div class="bracket-frame" style="padding: 1.5rem 2rem;">
-    <div class="toolbar" style="margin-bottom: 2rem;">
-      <span class="muted mono-sm">FILTER_PARAMETERS</span>
-      <div style="display: flex; gap: 1.5rem; align-items: center;">
-        <form method="GET" action="{{ url_for('teacher_dashboard') }}" class="inline-form">
-          <input type="date" id="date-pick" name="date" class="form-input" value="{{ selected_date }}" max="{{ selected_date }}" />
-          <button type="submit" class="btn-sys ghost" style="padding: 10px 14px;">SYNC</button>
-        </form>
-        <div style="width: 1px; height: 24px; background: var(--grid-line);"></div>
-        <input type="text" id="studentSearch" class="form-input" placeholder="SEARCH IDENTIFIER..." style="width: 240px;" />
-      </div>
-    </div>
+  <!-- ── Date picker + stats ── -->
+  <div class="teacher-controls glass">
+    <form method="GET" action="{{ url_for('teacher_dashboard') }}" class="date-form">
+      <label for="date-pick">Select Date</label>
+      <input type="date" id="date-pick" name="date"
+             value="{{ selected_date }}"
+             max="{{ selected_date }}" />
+      <button type="submit" class="btn btn-outline">View</button>
+    </form>
 
-    <div class="spec-strip">
-      <div class="spec-item">
-        <span class="spec-label">Verified (Present)</span>
-        <span class="spec-value success">{{ present_count }}</span>
+    <div class="mini-stats">
+      <div class="mini-stat present">
+        <span class="ms-val">{{ present_count }}</span>
+        <span class="ms-label">Present</span>
       </div>
-      <div class="spec-item">
-        <span class="spec-label">Unverified (Absent)</span>
-        <span class="spec-value danger">{{ absent_count }}</span>
+      <div class="mini-stat absent">
+        <span class="ms-val">{{ absent_count }}</span>
+        <span class="ms-label">Absent</span>
       </div>
-      <div class="spec-item">
-        <span class="spec-label">Total Roster</span>
-        <span class="spec-value">{{ total_count }}</span>
+      <div class="mini-stat total">
+        <span class="ms-val">{{ total_count }}</span>
+        <span class="ms-label">Total</span>
       </div>
       {% if total_count > 0 %}
-      <div class="spec-item">
-        <span class="spec-label">Verification Rate</span>
-        <span class="spec-value accent">{{ "%.0f"|format(present_count / total_count * 100) }}%</span>
+      <div class="mini-stat rate">
+        <span class="ms-val">{{ "%.0f"|format(present_count / total_count * 100) }}%</span>
+        <span class="ms-label">Rate</span>
       </div>
       {% endif %}
     </div>
   </div>
 
-  <!-- ── Student Attendance Table ── -->
-  <div class="bracket-frame">
-    <div class="toolbar">
-      <span class="muted mono-sm">ROSTER_VERIFICATION_LOG : {{ selected_date }}</span>
+  <!-- ── Attendance table ── -->
+  <div class="glass portal-card">
+    <div class="portal-card-header">
+      <h2>Students — {{ selected_date }}</h2>
+      <input type="text" id="studentSearch" class="search-input"
+             placeholder="Search name, USN, class…" />
     </div>
 
     {% if attendance_list %}
@@ -65,47 +64,46 @@
       <table class="data-table" id="attTable">
         <thead>
           <tr>
-            <th>IDX</th>
-            <th>VISUAL</th>
-            <th>SUBJECT</th>
+            <th>#</th>
+            <th>Photo</th>
+            <th>Name</th>
             <th>USN</th>
-            <th>CLASSIFICATION</th>
-            <th>SIGNAL</th>
-            <th>TIMESTAMP</th>
+            <th>Class</th>
+            <th>Status</th>
+            <th>Time Marked</th>
           </tr>
         </thead>
         <tbody>
           {% for s in attendance_list %}
-          <tr>
-            <td class="muted">{{ '%03d' % loop.index }}</td>
+          <tr class="{{ 'row-present' if s.is_present else 'row-absent' }}">
+            <td>{{ loop.index }}</td>
             <td>
-              <div class="thumb-img" style="width: 40px; height: 40px;">
-                {% if s.face_image %}
-                <img src="{{ s.face_image }}" alt="{{ s.name }}" />
-                {% else %}
-                <div class="thumb-placeholder">{{ s.name[0]|upper }}</div>
-                {% endif %}
-              </div>
-            </td>
-            <td style="color:var(--text-primary); font-weight:500;">{{ s.name }}</td>
-            <td>{{ s.usn or 'N/A' }}</td>
-            <td class="muted">{{ s.class_name or 'N/A' }}</td>
-            <td>
-              {% if s.is_present %}
-              <span class="status-line"><span class="status-dot success"></span> VERIFIED</span>
+              {% if s.face_image %}
+              <img src="{{ s.face_image }}" class="thumb-img" alt="{{ s.name }}" />
               {% else %}
-              <span class="status-line"><span class="status-dot danger"></span> NO_SIGNAL</span>
+              <div class="thumb-placeholder">{{ s.name[0]|upper }}</div>
               {% endif %}
             </td>
-            <td class="muted">{{ s.marked_at[11:19] if s.marked_at else '—' }}</td>
+            <td>{{ s.name }}</td>
+            <td><code>{{ s.usn or '—' }}</code></td>
+            <td>{{ s.class_name or '—' }}</td>
+            <td>
+              {% if s.is_present %}
+              <span class="status-badge present">✅ Present</span>
+              {% else %}
+              <span class="status-badge absent">❌ Absent</span>
+              {% endif %}
+            </td>
+            <td>{{ s.marked_at[11:16] if s.marked_at else '—' }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
     {% else %}
-    <div style="padding: 3rem 0; text-align: center;">
-      <p class="muted mono-sm">NO DATA DETECTED FOR {{ selected_date }}</p>
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p>No students registered yet.</p>
     </div>
     {% endif %}
   </div>
@@ -114,21 +112,19 @@
 
 <script>
   const search = document.getElementById('studentSearch');
-  if(search) {
-    search.addEventListener('input', () => {
-      const q = search.value.toLowerCase();
-      document.querySelectorAll('#attTable tbody tr').forEach(row => {
-        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-      });
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase();
+    document.querySelectorAll('#attTable tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
-  }
+  });
 
+  // Update export CSV button date when date picker changes
   const datePick  = document.getElementById('date-pick');
   const exportBtn = document.getElementById('exportBtn');
-  if(datePick && exportBtn) {
-    datePick.addEventListener('change', () => {
-      exportBtn.href = `/teacher/attendance/csv?date=${datePick.value}`;
-    });
-  }
+  datePick.addEventListener('change', () => {
+    const d = datePick.value;
+    exportBtn.href = `/teacher/attendance/csv?date=${d}`;
+  });
 </script>
 {% endblock %}

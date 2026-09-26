@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Admin Console · FaceTrack AI{% endblock %}
+{% block title %}Admin Dashboard · FaceTrack{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -10,96 +10,102 @@
   <!-- ── Header ── -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">System Administration</h1>
-      <p class="portal-sub">Institutional user governance, clearance assignments, and class mapping.</p>
+      <h1 class="portal-title">🛡️ Admin Dashboard</h1>
+      <p class="portal-sub">Manage users, roles and view system stats.</p>
     </div>
-    <a href="{{ url_for('admin_create_teacher') }}" class="btn-sys">
-      PROVISION TEACHER
+    <a href="{{ url_for('admin_create_teacher') }}" class="btn btn-primary">
+      + Create Teacher
     </a>
   </div>
 
-  <!-- ── Stats Metric Row ── -->
-  <div class="bracket-frame" style="padding: 1.5rem 2rem;">
-    <div class="spec-strip">
-      <div class="spec-item">
-        <span class="spec-label">Registered Students</span>
-        <span class="spec-value">{{ total_students }}</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">Faculty Teachers</span>
-        <span class="spec-value">{{ total_teachers }}</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">Verified Today</span>
-        <span class="spec-value accent">{{ present_today }}</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">System Date</span>
-        <span class="spec-value data-mono">{{ today }}</span>
-      </div>
+  <!-- ── Stats row ── -->
+  <div class="stats-row">
+    <div class="stat-card glass">
+      <div class="stat-icon">👩‍🎓</div>
+      <div class="stat-value">{{ total_students }}</div>
+      <div class="stat-label">Students</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-icon">👩‍🏫</div>
+      <div class="stat-value">{{ total_teachers }}</div>
+      <div class="stat-label">Teachers</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value">{{ present_today }}</div>
+      <div class="stat-label">Present Today</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-icon">📅</div>
+      <div class="stat-value">{{ today }}</div>
+      <div class="stat-label">Today's Date</div>
     </div>
   </div>
 
-  <!-- ── User Roster Table Card ── -->
-  <div class="bracket-frame">
-    <div class="toolbar">
-      <span class="muted mono-sm">INSTITUTIONAL_USER_REGISTRY</span>
-      <input type="text" id="userSearch" class="form-input" placeholder="SEARCH QUERY..." style="width: 280px;" />
+  <!-- ── User table ── -->
+  <div class="glass portal-card">
+    <div class="portal-card-header">
+      <h2>All Users</h2>
+      <input type="text" id="userSearch" class="search-input"
+             placeholder="Search by name, username or role…" />
     </div>
 
     <div class="table-wrap">
       <table class="data-table" id="userTable">
         <thead>
           <tr>
-            <th>IDX</th>
-            <th>SUBJECT</th>
-            <th>SYSTEM ID</th>
+            <th>#</th>
+            <th>Name</th>
+            <th>Username</th>
             <th>USN</th>
-            <th>CLASSIFICATION</th>
-            <th>CLEARANCE</th>
-            <th>ACTIONS</th>
+            <th>Class</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for u in users %}
           <tr>
-            <td class="muted">{{ '%03d' % loop.index }}</td>
-            <td style="color:var(--text-primary); font-weight:500;">{{ u.name or 'UNKNOWN' }}</td>
-            <td>{{ u.username }}</td>
-            <td class="muted">{{ u.usn or 'N/A' }}</td>
-            <td class="muted">{{ u.class_name or 'N/A' }}</td>
+            <td>{{ loop.index }}</td>
+            <td>{{ u.name or '—' }}</td>
+            <td><code>{{ u.username }}</code></td>
+            <td>{{ u.usn or '—' }}</td>
+            <td>{{ u.class_name or '—' }}</td>
             <td>
-              <span class="status-line">
-                <span class="status-dot {% if u.role == 'admin' %}danger{% elif u.role == 'teacher' %}active{% else %}success{% endif %}"></span>
-                {{ u.role }}
-              </span>
+              <span class="role-badge role-{{ u.role }}">{{ u.role }}</span>
             </td>
-            <td>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <!-- Edit role form -->
-                <form method="POST" action="{{ url_for('admin_set_role') }}" class="inline-form" id="role-form-{{ u.id }}">
-                  <input type="hidden" name="user_id" value="{{ u.id }}" />
-                  <select name="role" class="form-input" style="padding: 4px 8px;">
-                    <option value="student" {% if u.role=='student' %}selected{% endif %}>STUDENT</option>
-                    <option value="teacher" {% if u.role=='teacher' %}selected{% endif %}>TEACHER</option>
-                    <option value="admin" {% if u.role=='admin' %}selected{% endif %}>ADMIN</option>
-                  </select>
-                  <input name="class_name" class="form-input" style="padding: 4px 8px; width: 90px;" placeholder="CLASS" value="{{ u.class_name or '' }}" />
-                  <button type="submit" class="btn-sys ghost" style="padding: 4px 10px; font-size: 0.7rem;">SAVE</button>
-                </form>
+            <td>{{ u.created_at[:10] if u.created_at else '—' }}</td>
+            <td class="action-cell">
 
-                <!-- Delete User Form -->
-                {% if u.username != session.username %}
-                <form method="POST" action="{{ url_for('admin_delete_user') }}" style="display:inline;" onsubmit="return confirm('PURGE {{ u.username }}? THIS ACTION CANNOT BE UNDONE.');">
-                  <input type="hidden" name="user_id" value="{{ u.id }}" />
-                  <button type="submit" class="btn-sys" style="padding: 4px 10px; font-size: 0.7rem;">PURGE</button>
-                </form>
-                {% endif %}
-              </div>
+              <!-- Edit role form -->
+              <form method="POST" action="{{ url_for('admin_set_role') }}"
+                    class="inline-form" id="role-form-{{ u.id }}">
+                <input type="hidden" name="user_id" value="{{ u.id }}" />
+                <select name="role" class="mini-select">
+                  <option value="student"  {% if u.role=='student'  %}selected{% endif %}>student</option>
+                  <option value="teacher"  {% if u.role=='teacher'  %}selected{% endif %}>teacher</option>
+                  <option value="admin"    {% if u.role=='admin'    %}selected{% endif %}>admin</option>
+                </select>
+                <input name="class_name" class="mini-input" placeholder="Class"
+                       value="{{ u.class_name or '' }}" />
+                <button type="submit" class="btn btn-sm btn-outline">Save</button>
+              </form>
+
+              <!-- Delete -->
+              {% if u.username != session.username %}
+              <form method="POST" action="{{ url_for('admin_delete_user') }}"
+                    style="display:inline;"
+                    onsubmit="return confirm('Delete {{ u.username }}? This cannot be undone.');">
+                <input type="hidden" name="user_id" value="{{ u.id }}" />
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+              {% endif %}
+
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="7" class="muted" style="text-align: center; padding: 2rem;">NO REGISTRY DATA FOUND</td></tr>
+          <tr><td colspan="8" style="text-align:center;color:var(--muted)">No users yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -110,13 +116,11 @@
 
 <script>
   const searchBox = document.getElementById('userSearch');
-  if(searchBox) {
-    searchBox.addEventListener('input', () => {
-      const q = searchBox.value.toLowerCase();
-      document.querySelectorAll('#userTable tbody tr').forEach(row => {
-        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-      });
+  searchBox.addEventListener('input', () => {
+    const q = searchBox.value.toLowerCase();
+    document.querySelectorAll('#userTable tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
-  }
+  });
 </script>
 {% endblock %}

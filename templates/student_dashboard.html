@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}My Attendance · FaceTrack AI{% endblock %}
+{% block title %}My Attendance · FaceTrack{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -10,97 +10,100 @@
   <!-- ── Header ── -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">Optical Verification Log</h1>
-      <p class="portal-sub">SUBJECT ID: {{ user.usn or 'UNKNOWN' }} | CLASSIFICATION: {{ user.class_name or 'UNASSIGNED' }}</p>
+      <h1 class="portal-title">📊 My Attendance</h1>
+      <p class="portal-sub">Your personal attendance record.</p>
     </div>
-    <a href="{{ url_for('detect') }}" class="btn-sys">
-      INITIATE SCAN &rarr;
+    <a href="{{ url_for('detect') }}" class="btn btn-primary">
+      📷 Check In Now
     </a>
   </div>
 
-  <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2.5rem; align-items: start;">
-    
-    <!-- ── Attendance log ── -->
-    <div class="bracket-frame">
-      <div class="toolbar" style="margin-bottom: 1rem;">
-        <span class="muted mono-sm">VERIFICATION_HISTORY</span>
-        <span class="status-line"><span class="status-dot active"></span> SYNCED</span>
-      </div>
-
-      {% if records %}
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>IDX</th>
-              <th>DATE</th>
-              <th>TIMESTAMP</th>
-              <th>STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for r in records %}
-            <tr>
-              <td class="muted">{{ '%03d' % loop.index }}</td>
-              <td>{{ r.attendance_date }}</td>
-              <td>{{ r.marked_at[11:19] if r.marked_at else '—' }}</td>
-              <td><span class="status-line"><span class="status-dot success"></span> VERIFIED</span></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+  <!-- ── Profile + summary ── -->
+  <div class="student-top-row">
+    <div class="glass student-profile-card">
+      {% if user.face_image %}
+      <img src="{{ user.face_image }}" class="student-face-img" alt="Profile photo" />
       {% else %}
-      <div style="padding: 3rem 0; text-align: center;">
-        <p class="muted mono-sm">NO DATA DETECTED</p>
-        <a href="{{ url_for('detect') }}" class="btn-sys" style="margin-top:1rem;">
-          INITIATE SCAN
-        </a>
-      </div>
+      <div class="student-face-placeholder">{{ (user.name or 'S')[0]|upper }}</div>
       {% endif %}
+      <div class="student-info">
+        <h2>{{ user.name }}</h2>
+        <p class="student-meta">USN: <strong>{{ user.usn or 'N/A' }}</strong></p>
+        <p class="student-meta">Class: <strong>{{ user.class_name or 'N/A' }}</strong></p>
+      </div>
     </div>
 
-    <!-- ── Profile + summary ── -->
-    <div class="bracket-frame" style="display: flex; flex-direction: column; gap: 1.5rem;">
-      <div class="toolbar" style="margin-bottom: 0;">
-        <span class="muted mono-sm">SUBJECT_DATA</span>
-      </div>
-
-      <div style="display: flex; gap: 1rem; align-items: flex-start;">
-        <div class="thumb-img" style="width: 64px; height: 64px;">
-          {% if user.face_image %}
-          <img src="{{ user.face_image }}" alt="Profile photo" />
-          {% else %}
-          <div class="thumb-placeholder">{{ (user.name or 'S')[0]|upper }}</div>
-          {% endif %}
+    <div class="student-stats-col">
+      <!-- Circular progress -->
+      <div class="glass attendance-ring-card">
+        <div class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle class="ring-fill"
+                    cx="60" cy="60" r="52"
+                    stroke-dasharray="{{ (percentage / 100) * 327 | round(1) }} 327"
+                    style="stroke: {% if percentage >= 75 %}#3ee6d0{% elif percentage >= 50 %}#f0a500{% else %}#e8556b{% endif %};" />
+          </svg>
+          <div class="ring-text">
+            <span class="ring-pct">{{ percentage }}%</span>
+            <span class="ring-lbl">Attendance</span>
+          </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span class="spec-value">{{ user.name }}</span>
-          <span class="muted mono-sm">VECTORED</span>
-        </div>
-      </div>
-
-      <div class="spec-item">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-          <span class="spec-label">Presence Rate</span>
-          <span class="spec-value {% if percentage < 75 %}danger{% else %}accent{% endif %}">{{ percentage }}%</span>
-        </div>
-        <div class="signal-bar-wrap">
-          <div class="signal-bar-fill {% if percentage < 75 %}danger{% else %}active{% endif %}" style="width: {{ percentage }}%;"></div>
-        </div>
-        <span class="muted mono-sm" style="text-align: right;">{{ present_days }} / {{ total_days }}</span>
-      </div>
-
-      <div style="border-top: 1px solid var(--grid-line); padding-top: 1rem;">
+        <p class="ring-detail">{{ present_days }} / {{ total_days }} days present</p>
         {% if percentage < 75 %}
-        <span class="status-line"><span class="status-dot danger"></span> WARNING: BELOW THRESHOLD</span>
+        <p class="ring-warn">⚠️ Below 75% — at risk</p>
         {% elif percentage >= 90 %}
-        <span class="status-line"><span class="status-dot active"></span> OPTIMAL SIGNAL</span>
-        {% else %}
-        <span class="status-line"><span class="status-dot success"></span> ACCEPTABLE RANGE</span>
+        <p class="ring-good">🎉 Excellent attendance!</p>
         {% endif %}
       </div>
     </div>
+  </div>
+
+  <!-- ── Attendance log ── -->
+  <div class="glass portal-card">
+    <div class="portal-card-header">
+      <h2>Attendance History</h2>
+      <span class="muted-label">Most recent first</span>
+    </div>
+
+    {% if records %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Time Marked</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+          <tr class="row-present">
+            <td>{{ loop.index }}</td>
+            <td>{{ r.attendance_date }}</td>
+            <td>
+              {% set days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+              {# Python date weekday parsing via jinja2 is limited; show date only #}
+              {{ r.attendance_date }}
+            </td>
+            <td>{{ r.marked_at[11:16] if r.marked_at else '—' }}</td>
+            <td><span class="status-badge present">✅ Present</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p>No attendance records yet.</p>
+      <a href="{{ url_for('detect') }}" class="btn btn-primary" style="margin-top:1rem;">
+        📷 Check In Now
+      </a>
+    </div>
+    {% endif %}
   </div>
 
 </div>

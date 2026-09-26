@@ -69,99 +69,65 @@ function clearOverlay() {
     overlay.getContext("2d").clearRect(0, 0, overlay.width, overlay.height);
 }
 
-function drawBox(box, color, label, nameText = null, confText = null) {
+/**
+ * drawBox — draw a labelled bounding box on the canvas.
+ *
+ * face-api returns coordinates in the UNMIRRORED video pixel space.
+ * The canvas has NO CSS transform, so we manually flip X so the box
+ * appears over the correct face position in the CSS-mirrored video.
+ *
+ *   flippedX = canvasWidth - box.x - box.width
+ */
+function drawBox(box, color, label) {
     const ctx = overlay.getContext("2d");
     const W   = overlay.width;
+
+    // Flip X to match the CSS-mirrored video
     const flippedX = W - box.x - box.width;
 
+    // ── Border rect ────────────────────────────────────────────────────────
     ctx.save();
     ctx.strokeStyle = color;
-    ctx.lineWidth   = 2;
-    
-    // Draw Rangefinder Brackets
-    const L = 20; // length of bracket arm
-    const x = flippedX;
-    const y = box.y;
-    const w = box.width;
-    const h = box.height;
-    
+    ctx.lineWidth   = 3;
+    ctx.shadowColor = color;
+    ctx.shadowBlur  = 8;
+    ctx.strokeRect(flippedX, box.y, box.width, box.height);
+    ctx.restore();
+
+    // ── Label background + text ────────────────────────────────────────────
+    const labelY    = box.y > 32 ? box.y - 10 : box.y + box.height + 22;
+    const labelX    = flippedX;
+    const padding   = 6;
+    const fontSize  = 14;
+
+    ctx.save();
+    ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+
+    // Background pill
+    const textW = ctx.measureText(label).width;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.85;
     ctx.beginPath();
-    // Top-Left
-    ctx.moveTo(x + L, y); ctx.lineTo(x, y); ctx.lineTo(x, y + L);
-    // Top-Right
-    ctx.moveTo(x + w - L, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + L);
-    // Bottom-Left
-    ctx.moveTo(x, y + h - L); ctx.lineTo(x, y + h); ctx.lineTo(x + L, y + h);
-    // Bottom-Right
-    ctx.moveTo(x + w, y + h - L); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w - L, y + h);
-    ctx.stroke();
-    
-    // Readout block beside the frame
-    if (nameText && confText) {
-        ctx.font = `500 12px "JetBrains Mono", monospace`;
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        
-        // Name (amber/grey)
-        ctx.fillStyle = color;
-        ctx.fillText(nameText.toUpperCase(), x + w + 8, y);
-        
-        // Match % (grey mono)
-        ctx.fillStyle = "#9AA0A8";
-        ctx.fillText(confText.toUpperCase(), x + w + 8, y + 16);
-    }
-    
+    ctx.roundRect(labelX, labelY - fontSize - padding / 2,
+                  textW + padding * 2, fontSize + padding, 4);
+    ctx.fill();
+
+    // Text — drawn normally (canvas not CSS-mirrored) so it reads correctly
+    ctx.globalAlpha = 1;
+    ctx.fillStyle   = "#000";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(label, labelX + padding, labelY);
     ctx.restore();
 }
 
 // ── Match result panel ────────────────────────────────────────────────────
-let sparklineData = Array(30).fill(0);
-
-function showMatch(name, photoSrc, conf) {
-    resultPanel.style.opacity = "1";
-    resultName.innerText = name.toUpperCase();
+function showMatch(name, photoSrc) {
+    resultPanel.style.display = "block";
+    resultName.innerText = name;
     resultPhoto.src = photoSrc;
-    
-    const confVal = conf ? (conf * 100).toFixed(1) : "0.0";
-    document.getElementById("signalValueText").innerText = `${confVal}%`;
-    document.getElementById("signalBar").style.width = `${confVal}%`;
-    
-    const now = new Date().toLocaleTimeString('en-US', {hour12: false});
-    const statusLine = document.getElementById("statusLineCheckIn");
-    statusLine.innerHTML = `<span class="status-dot active"></span> CHECKED IN ${now}`;
-    
-    updateSparkline(conf || 0);
 }
 function hideMatch() {
-    resultPanel.style.opacity = "0.2";
-    const statusLine = document.getElementById("statusLineCheckIn");
-    if(statusLine) statusLine.innerHTML = `<span class="status-dot"></span> AWAITING_SUBJECT`;
-    updateSparkline(0);
-}
-
-function updateSparkline(val) {
-    sparklineData.push(val);
-    sparklineData.shift();
-    
-    const canvas = document.getElementById("sparklineCanvas");
-    if(!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const W = canvas.width;
-    const H = canvas.height;
-    
-    ctx.clearRect(0, 0, W, H);
-    ctx.strokeStyle = "#FFB627";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    
-    const step = W / (sparklineData.length - 1);
-    for(let i=0; i<sparklineData.length; i++) {
-        const x = i * step;
-        const y = H - (sparklineData[i] * H * 0.8);
-        if(i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+    resultPanel.style.display = "none";
 }
 
 // ── Snapshot (mirrored, matching what the user sees) ─────────────────────
@@ -295,12 +261,12 @@ async function recognize() {
 
         if (bestUser && bestDistance < MATCH_THRESHOLD) {
             const conf = parseFloat((1 - bestDistance).toFixed(3));
-            drawBox(box, "#FFB627", "", bestUser.name, `MATCH ${(conf * 100).toFixed(1)}%`);
-            showMatch(bestUser.name, bestUser.image || "/static/img/unknown-placeholder.png", conf);
+            drawBox(box, "#3ee6d0", `${bestUser.name}  ${Math.round(conf * 100)}%`);
+            showMatch(bestUser.name, bestUser.image || "/static/img/unknown-placeholder.png");
             anyMatchShown = true;
             logDetection(bestUser.id, bestUser.name, false, conf, box);
         } else {
-            drawBox(box, "#9AA0A8", "", "UNKNOWN", "MATCH 0.0%");
+            drawBox(box, "#e8556b", "Unknown");
             logDetection(null, "Unknown", true, 0, box);
         }
     });
