@@ -1,68 +1,83 @@
 {% extends 'base.html' %}
 
-{% block title %}Live Face Detect · FaceTrack AI{% endblock %}
+{% block title %}Optical Scanning · FaceTrack AI{% endblock %}
 
 {% block content %}
-
 <div class="portal-page">
 
-  <!-- Header -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">📷 Live Face Scanner</h1>
+      <h1 class="portal-title">Optical Verification</h1>
       <p class="portal-sub">Real-time biometric detection powered by SSD MobileNet V1.</p>
     </div>
-    <a href="{{ url_for('portal_redirect') }}" class="btn btn-ghost">
-      ← Back to Portal
+    <a href="{{ url_for('portal_redirect') }}" class="btn-sys ghost">
+      &larr; ABORT SCAN
     </a>
   </div>
 
-  <div class="detect-grid">
-
+  <div style="display: grid; grid-template-columns: 1fr 340px; gap: 2.5rem; align-items: start;">
+    
     <!-- Camera Viewport Card -->
-    <div class="glass video-card">
-      <div style="display:flex; align-items:center; justify-content:space-between;">
-        <h2 style="margin:0;">Webcam Viewport</h2>
-        <span class="status-badge present" style="font-family:var(--font-mono);">● 500ms ACTIVE SCAN</span>
+    <div class="bracket-frame" style="padding: 1rem;">
+      <div class="toolbar" style="margin-bottom: 1rem;">
+        <span class="muted mono-sm">OPTICAL_SENSOR_01</span>
+        <span class="status-line">
+          <span class="status-dot active"></span> 500MS POLLING
+        </span>
       </div>
 
-      <div class="video-frame">
-        <video id="video" autoplay muted playsinline></video>
-        <canvas id="overlay"></canvas>
-        <div class="video-corner tl"></div>
-        <div class="video-corner tr"></div>
-        <div class="video-corner bl"></div>
-        <div class="video-corner br"></div>
+      <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden;">
+        <video id="video" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+        <canvas id="overlay" style="position: absolute; inset: 0; pointer-events: none;"></canvas>
+      </div>
+      
+      <div class="toolbar" style="margin-top: 1rem; margin-bottom: 0;">
+        <span id="result" class="muted mono-sm">INITIALIZING_ENGINE...</span>
+      </div>
+    </div>
+
+    <!-- Live Match / SIGNAL Panel -->
+    <div class="bracket-frame" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="toolbar" style="margin-bottom: 0;">
+        <span class="muted mono-sm">SIGNAL_ANALYSIS</span>
       </div>
 
-      <h3 id="result">Initializing face detection engine…</h3>
-    </div>
+      <div id="resultPanel" style="display: flex; flex-direction: column; gap: 1rem; opacity: 0.2; transition: opacity 0.3s;">
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div class="thumb-img" style="width: 64px; height: 64px;">
+            <img id="resultPhoto" src="/static/img/unknown-placeholder.png" alt="Detected face">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span class="muted mono-sm">SUBJECT_IDENTIFIED</span>
+            <span id="resultName" class="spec-value accent" style="font-size: 1.1rem; line-height: 1.2;">UNKNOWN</span>
+          </div>
+        </div>
 
-    <!-- Live Match Found Panel -->
-    <div class="glass result-panel" id="resultPanel" style="display: none;">
-      <h2>Match Identified</h2>
-      <div class="result-photo-wrap" id="resultPhotoWrap">
-        <img id="resultPhoto" src="" alt="Detected face">
+        <div class="spec-item">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <span class="spec-label">Confidence Match</span>
+            <span id="signalValueText" class="spec-value" style="font-size: 1rem;">0.0%</span>
+          </div>
+          <div class="signal-bar-wrap">
+            <div id="signalBar" class="signal-bar-fill active" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="spec-item">
+          <span class="spec-label">Waveform History</span>
+          <!-- A cosmetic sparkline can be drawn via JS on this canvas -->
+          <canvas id="sparklineCanvas" width="280" height="40" style="width: 100%; height: 40px; border-bottom: 1px solid var(--grid-line);"></canvas>
+        </div>
+
+        <div id="statusLineCheckIn" class="status-line" style="margin-top: 0.5rem;">
+          <span class="status-dot"></span> AWAITING_SUBJECT
+        </div>
       </div>
-      <h3 class="result-name" id="resultName"></h3>
-      <span class="status-badge present">✅ Attendance Marked</span>
     </div>
 
-  </div>
-
-  <!-- Recent Detections Stream -->
-  <div class="glass recent-activity">
-    <div class="portal-card-header" style="border-bottom:none; padding:0 0 1rem 0; background:transparent;">
-      <h2 style="margin:0;">Recent System Activity</h2>
-      <span class="muted-label" style="font-family:var(--font-mono);">Real-Time Session Stream</span>
-    </div>
-    <div class="recent-list" id="recentList">
-      <p class="empty-state" style="padding:1rem 0;">No detections logged in this session yet.</p>
-    </div>
   </div>
 
 </div>
-
 {% endblock %}
 
 {% block scripts %}

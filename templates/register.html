@@ -5,117 +5,124 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Create Account · FaceTrack AI</title>
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
 </head>
-<body class="login-body">
-
-  <!-- Ambient Mesh Background Orbs -->
-  <div class="ambient-bg" aria-hidden="true">
-    <div class="ambient-grid"></div>
-    <div class="aura-orb orb-1"></div>
-    <div class="aura-orb orb-2"></div>
-  </div>
+<body class="auth-body">
+  <div class="bg-grid" aria-hidden="true"></div>
 
   <div class="auth-container" style="max-width: 480px;">
     <div class="auth-brand">
-      <a href="{{ url_for('landing') }}">FaceTrack <span>AI</span></a>
+      <a href="{{ url_for('landing') }}">FaceTrack<span style="color: var(--accent);">_AI</span></a>
     </div>
 
-    <div class="auth-card-clean">
-      <!-- Flash messages -->
+    <div class="bracket-frame">
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, msg in messages %}
-        <div style="padding:10px 14px; background:rgba(255,59,92,0.1); border:1px solid rgba(255,59,92,0.3); color:var(--danger, #ff3b5c); border-radius:var(--radius-sm, 6px); font-size:0.88rem; margin-bottom:1.25rem;">
+        <div class="sys-flash {% if category == 'error' %}error{% endif %}">
           {{ msg }}
         </div>
         {% endfor %}
       {% endif %}
       {% endwith %}
 
-      <h1 class="auth-title">Create account</h1>
-      <p class="auth-sub">Enter your details and capture your face profile.</p>
+      <h1 class="auth-title">Enrol Face Profile</h1>
+      <p class="auth-sub">Enter your details and capture optical verification data.</p>
 
       <form method="POST" action="{{ url_for('register') }}" id="register-form" class="auth-form">
         <div class="form-group">
           <label for="username" class="form-label">Username</label>
-          <input id="username" name="username" type="text" autocomplete="username" required autofocus minlength="3" placeholder="Username" class="form-input" />
+          <input id="username" name="username" type="text" autocomplete="username" required autofocus minlength="3" class="form-input" />
         </div>
 
         <div class="form-group">
           <label for="name" class="form-label">Full Name</label>
-          <input id="name" name="name" type="text" autocomplete="name" required placeholder="Full name" class="form-input" />
+          <input id="name" name="name" type="text" autocomplete="name" required class="form-input" />
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div class="form-group">
             <label for="usn" class="form-label">USN / Roll No.</label>
-            <input id="usn" name="usn" type="text" autocomplete="off" required placeholder="USN" class="form-input" />
+            <input id="usn" name="usn" type="text" autocomplete="off" required class="form-input" />
           </div>
 
           <div class="form-group">
             <label for="class_name" class="form-label">Class / Section</label>
-            <input id="class_name" name="class_name" type="text" autocomplete="off" placeholder="Section" class="form-input" />
+            <input id="class_name" name="class_name" type="text" autocomplete="off" class="form-input" />
           </div>
         </div>
 
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
-          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="At least 6 characters" class="form-input" />
-          <div class="strength" id="strength" style="margin-top:6px;">
-            <span class="s-on-1"></span><span class="s-on-2"></span><span class="s-on-3"></span><span class="s-on-4"></span>
-          </div>
+          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6" class="form-input" />
+          <div class="strength" id="strength" style="margin-top:6px; display: none;"></div>
         </div>
 
         <div class="form-group">
           <label for="confirm" class="form-label">Confirm Password</label>
-          <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="Repeat password" class="form-input" />
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6" class="form-input" />
         </div>
 
-        <div style="border-top:1px solid var(--border-subtle, rgba(255,255,255,0.08)); margin:10px 0; padding-top:14px;">
-          <label class="form-label" style="display:block; margin-bottom:8px;">Face Profile Capture</label>
+        <div class="capture-ui">
+          <label class="form-label" style="display:block; margin-bottom:8px;">Optical Sensor Array</label>
           
-          <div style="position:relative; border-radius:var(--radius-md, 10px); overflow:hidden; border:1px solid rgba(0,245,255,0.35); background:var(--bg-0, #04070c); aspect-ratio:4/3; margin-bottom:12px; box-shadow:0 8px 25px rgba(0,0,0,0.5);">
-            <video id="video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
-            <div style="position:absolute; top:10px; right:10px; background:rgba(3,7,18,0.75); backdrop-filter:blur(8px); padding:4px 10px; border-radius:var(--radius-sm, 6px); font-size:0.72rem; color:var(--neon-cyan, #00f5ff); font-family:'JetBrains Mono', monospace; font-weight:600; border:1px solid rgba(0,245,255,0.3);">
-              ● LIVE AI CAMERA
+          <div class="video-frame">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="live-status status-line">
+              <span class="status-dot active"></span> LIVE
             </div>
+            <!-- Corners -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid rgba(255,182,39,0.2); pointer-events: none; mix-blend-mode: screen;"></div>
           </div>
 
           <canvas id="canvas" style="display:none;"></canvas>
 
-          <div class="capture-progress-wrap" style="margin: 8px 0; display: none;" id="progressWrap">
-            <div style="background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; height: 6px;">
-              <div class="capture-progress-bar" id="capture-progress" style="width: 0%; height: 100%; background: var(--neon-cyan, #00f5ff); border-radius: 99px; transition: width 0.3s; box-shadow: 0 0 10px rgba(0,245,255,0.5);"></div>
+          <div class="capture-progress-wrap" style="margin: 12px 0; display: none; position: relative;" id="progressWrap">
+            <!-- Background track for the 5 slots -->
+            <div style="display: flex; gap: 8px; position: absolute; inset: 0;">
+              <div style="flex: 1; border: 1px solid var(--grid-line);"></div>
+              <div style="flex: 1; border: 1px solid var(--grid-line);"></div>
+              <div style="flex: 1; border: 1px solid var(--grid-line);"></div>
+              <div style="flex: 1; border: 1px solid var(--grid-line);"></div>
+              <div style="flex: 1; border: 1px solid var(--grid-line);"></div>
+            </div>
+            <!-- The actual fill width bar -->
+            <div id="capture-progress" style="width: 0%; height: 10px; background: var(--accent); transition: width 0.3s ease;"></div>
+            <!-- Foreground mask to create gaps -->
+            <div style="display: flex; gap: 8px; position: absolute; inset: 0;">
+              <div style="flex: 1; border: 1px solid var(--text-muted);"></div>
+              <div style="flex: 1; border: 1px solid var(--text-muted);"></div>
+              <div style="flex: 1; border: 1px solid var(--text-muted);"></div>
+              <div style="flex: 1; border: 1px solid var(--text-muted);"></div>
+              <div style="flex: 1; border: 1px solid var(--text-muted);"></div>
             </div>
           </div>
 
-          <button type="button" id="capture-btn" style="width:100%; padding:11px; background:rgba(0,245,255,0.08); border:1px solid rgba(0,245,255,0.35); color:var(--neon-cyan, #00f5ff); font-family: 'Space Grotesk', sans-serif; font-size:0.9rem; font-weight:700; border-radius:var(--radius-sm, 6px); cursor:pointer; transition:all 0.2s ease;">
-            📷 Capture Face Profile (5 samples)
+          <button type="button" id="capture-btn" class="btn-sys" style="width:100%; margin-top: 8px;">
+            INITIATE SCAN (5)
           </button>
 
-          <p id="capture-status" style="margin: 8px 0 0; font-size: 0.82rem; color: var(--text-dim, #94a3b8); text-align: center; font-family: 'JetBrains Mono', monospace;">
-            Face profile not captured yet
-          </p>
+          <div id="capture-status" class="status-line" style="margin-top: 12px; width: 100%; justify-content: center;">
+            <span class="status-dot"></span> SENSOR STANDBY
+          </div>
 
           <input type="hidden" id="face_descriptor" name="face_descriptor">
           <input type="hidden" id="face_image" name="face_image">
         </div>
 
-        <button type="submit" class="btn-auth-primary" style="margin-top: 14px;">Create Account →</button>
+        <button type="submit" class="btn-sys" style="margin-top: 14px;">CREATE ACCOUNT</button>
       </form>
 
       <div class="auth-footer">
-        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+        ALREADY REGISTERED? <a href="{{ url_for('login') }}">AUTHENTICATE</a>
       </div>
-
-      <div class="auth-back">
-        <a href="{{ url_for('landing') }}">← Back to home</a>
+      <div class="auth-footer" style="margin-top: 0.5rem;">
+        <a href="{{ url_for('landing') }}" style="color: var(--text-muted);">&larr; ABORT</a>
       </div>
     </div>
   </div>
@@ -123,6 +130,5 @@
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <script src="{{ url_for('static', filename='js/register_face.js') }}"></script>
   <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-
 </body>
 </html>

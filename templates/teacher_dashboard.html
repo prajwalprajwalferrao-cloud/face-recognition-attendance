@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Attendance Register · Teacher Portal{% endblock %}
+{% block title %}Attendance Log · Teacher Terminal{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -10,53 +10,54 @@
   <!-- ── Header ── -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">📋 Attendance Register</h1>
-      <p class="portal-sub">Daily verification roster and official CSV record generation.</p>
+      <h1 class="portal-title">Institutional Attendance Log</h1>
+      <p class="portal-sub">Daily verification roster and automated CSV record compilation.</p>
     </div>
-    <a href="{{ url_for('teacher_export_csv', date=selected_date) }}"
-       class="btn btn-secondary" id="exportBtn">
-      ⬇ Export CSV Report
+    <a href="{{ url_for('teacher_export_csv', date=selected_date) }}" class="btn-sys" id="exportBtn">
+      EXTRACT LOG (CSV)
     </a>
   </div>
 
-  <!-- ── Date picker + Stat Counters Toolbar ── -->
-  <div class="teacher-controls">
-    <form method="GET" action="{{ url_for('teacher_dashboard') }}" class="date-form">
-      <label for="date-pick">Select Date</label>
-      <input type="date" id="date-pick" name="date"
-             value="{{ selected_date }}"
-             max="{{ selected_date }}" />
-      <button type="submit" class="btn btn-sm btn-ghost">View Date</button>
-    </form>
+  <!-- ── Controls & Readouts ── -->
+  <div class="bracket-frame" style="padding: 1.5rem 2rem;">
+    <div class="toolbar" style="margin-bottom: 2rem;">
+      <span class="muted mono-sm">FILTER_PARAMETERS</span>
+      <div style="display: flex; gap: 1.5rem; align-items: center;">
+        <form method="GET" action="{{ url_for('teacher_dashboard') }}" class="inline-form">
+          <input type="date" id="date-pick" name="date" class="form-input" value="{{ selected_date }}" max="{{ selected_date }}" />
+          <button type="submit" class="btn-sys ghost" style="padding: 10px 14px;">SYNC</button>
+        </form>
+        <div style="width: 1px; height: 24px; background: var(--grid-line);"></div>
+        <input type="text" id="studentSearch" class="form-input" placeholder="SEARCH IDENTIFIER..." style="width: 240px;" />
+      </div>
+    </div>
 
-    <div class="mini-stats">
-      <div class="mini-stat present">
-        <span class="ms-val">{{ present_count }}</span>
-        <span class="ms-label">Present</span>
+    <div class="spec-strip">
+      <div class="spec-item">
+        <span class="spec-label">Verified (Present)</span>
+        <span class="spec-value success">{{ present_count }}</span>
       </div>
-      <div class="mini-stat absent">
-        <span class="ms-val">{{ absent_count }}</span>
-        <span class="ms-label">Absent</span>
+      <div class="spec-item">
+        <span class="spec-label">Unverified (Absent)</span>
+        <span class="spec-value danger">{{ absent_count }}</span>
       </div>
-      <div class="mini-stat total">
-        <span class="ms-val">{{ total_count }}</span>
-        <span class="ms-label">Total</span>
+      <div class="spec-item">
+        <span class="spec-label">Total Roster</span>
+        <span class="spec-value">{{ total_count }}</span>
       </div>
       {% if total_count > 0 %}
-      <div class="mini-stat rate">
-        <span class="ms-val">{{ "%.0f"|format(present_count / total_count * 100) }}%</span>
-        <span class="ms-label">Rate</span>
+      <div class="spec-item">
+        <span class="spec-label">Verification Rate</span>
+        <span class="spec-value accent">{{ "%.0f"|format(present_count / total_count * 100) }}%</span>
       </div>
       {% endif %}
     </div>
   </div>
 
   <!-- ── Student Attendance Table ── -->
-  <div class="portal-card">
-    <div class="portal-card-header">
-      <h2>Class Roster Log — <span class="data-mono" style="color:var(--neon-cyan);">{{ selected_date }}</span></h2>
-      <input type="text" id="studentSearch" class="search-input"
-             placeholder="Search student name, USN, section…" />
+  <div class="bracket-frame">
+    <div class="toolbar">
+      <span class="muted mono-sm">ROSTER_VERIFICATION_LOG : {{ selected_date }}</span>
     </div>
 
     {% if attendance_list %}
@@ -64,46 +65,47 @@
       <table class="data-table" id="attTable">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Profile</th>
-            <th>Student Name</th>
+            <th>IDX</th>
+            <th>VISUAL</th>
+            <th>SUBJECT</th>
             <th>USN</th>
-            <th>Class / Section</th>
-            <th>Verification Status</th>
-            <th>Timestamp</th>
+            <th>CLASSIFICATION</th>
+            <th>SIGNAL</th>
+            <th>TIMESTAMP</th>
           </tr>
         </thead>
         <tbody>
           {% for s in attendance_list %}
-          <tr class="{{ 'row-present' if s.is_present else 'row-absent' }}">
-            <td class="data-mono">{{ loop.index }}</td>
+          <tr>
+            <td class="muted">{{ '%03d' % loop.index }}</td>
             <td>
-              {% if s.face_image %}
-              <img src="{{ s.face_image }}" class="thumb-img" alt="{{ s.name }}" />
-              {% else %}
-              <div class="thumb-placeholder">{{ s.name[0]|upper }}</div>
-              {% endif %}
+              <div class="thumb-img" style="width: 40px; height: 40px;">
+                {% if s.face_image %}
+                <img src="{{ s.face_image }}" alt="{{ s.name }}" />
+                {% else %}
+                <div class="thumb-placeholder">{{ s.name[0]|upper }}</div>
+                {% endif %}
+              </div>
             </td>
-            <td style="font-weight:700; color:#fff;">{{ s.name }}</td>
-            <td><code>{{ s.usn or '—' }}</code></td>
-            <td class="data-mono">{{ s.class_name or '—' }}</td>
+            <td style="color:var(--text-primary); font-weight:500;">{{ s.name }}</td>
+            <td>{{ s.usn or 'N/A' }}</td>
+            <td class="muted">{{ s.class_name or 'N/A' }}</td>
             <td>
               {% if s.is_present %}
-              <span class="status-badge present">✅ Present</span>
+              <span class="status-line"><span class="status-dot success"></span> VERIFIED</span>
               {% else %}
-              <span class="status-badge absent">❌ Absent</span>
+              <span class="status-line"><span class="status-dot danger"></span> NO_SIGNAL</span>
               {% endif %}
             </td>
-            <td class="data-mono" style="color:var(--text-dim);">{{ s.marked_at[11:16] if s.marked_at else '—' }}</td>
+            <td class="muted">{{ s.marked_at[11:19] if s.marked_at else '—' }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
     {% else %}
-    <div class="empty-state">
-      <div class="empty-icon">📭</div>
-      <p>No student roster records found for {{ selected_date }}.</p>
+    <div style="padding: 3rem 0; text-align: center;">
+      <p class="muted mono-sm">NO DATA DETECTED FOR {{ selected_date }}</p>
     </div>
     {% endif %}
   </div>
@@ -112,19 +114,21 @@
 
 <script>
   const search = document.getElementById('studentSearch');
-  search.addEventListener('input', () => {
-    const q = search.value.toLowerCase();
-    document.querySelectorAll('#attTable tbody tr').forEach(row => {
-      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  if(search) {
+    search.addEventListener('input', () => {
+      const q = search.value.toLowerCase();
+      document.querySelectorAll('#attTable tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
     });
-  });
+  }
 
-  // Update export CSV button date URL when date picker changes
   const datePick  = document.getElementById('date-pick');
   const exportBtn = document.getElementById('exportBtn');
-  datePick.addEventListener('change', () => {
-    const d = datePick.value;
-    exportBtn.href = `/teacher/attendance/csv?date=${d}`;
-  });
+  if(datePick && exportBtn) {
+    datePick.addEventListener('change', () => {
+      exportBtn.href = `/teacher/attendance/csv?date=${datePick.value}`;
+    });
+  }
 </script>
 {% endblock %}

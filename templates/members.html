@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Members · FaceTrack{% endblock %}
+{% block title %}Members · FaceTrack AI{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -8,26 +8,26 @@
 <div class="portal-page">
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">📋 Registered Members</h1>
-      <p class="portal-sub">{{ members|length }} member{{ '' if members|length == 1 else 's' }} with face data stored locally.</p>
+      <h1 class="portal-title">Identity Registry</h1>
+      <p class="portal-sub">TOTAL VECTORED SUBJECTS: {{ members|length }}</p>
     </div>
-    <a href="{{ url_for('register') }}" class="btn btn-primary">
-      + Register Member
+    <a href="{{ url_for('register') }}" class="btn-sys">
+      ENROL SUBJECT
     </a>
   </div>
 
   {% if members %}
-  <div class="glass portal-card" style="padding: 1.5rem;">
+  <div class="bracket-frame" style="padding: 1.5rem;">
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th>Face</th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Last Seen</th>
-            <th>Detections</th>
-            <th>Actions</th>
+            <th>VISUAL</th>
+            <th>SUBJECT ID</th>
+            <th>CLEARANCE</th>
+            <th>LAST SEEN</th>
+            <th>DETECTIONS</th>
+            <th>COMMAND</th>
           </tr>
         </thead>
         <tbody>
@@ -36,27 +36,24 @@
             <td>
               <div class="thumb-img" style="width: 40px; height: 40px;">
                 {% if m.face_image %}
-                <img src="{{ m.face_image }}" alt="Face of {{ m.name }}" style="width: 100%; height: 100%; object-fit: cover;" />
+                <img src="{{ m.face_image }}" alt="Face of {{ m.name }}" />
                 {% else %}
                 <div class="thumb-placeholder">{{ m.name[0]|upper }}</div>
                 {% endif %}
               </div>
             </td>
-            <td style="font-weight: 600; color: #fff;">{{ m.name }}</td>
+            <td style="color: var(--text-primary); font-weight: 500;">{{ m.name }}</td>
             <td>
-              {% if m.role %}
-                <span class="role-badge {% if m.role == 'admin' %}admin{% elif m.role == 'teacher' %}teacher{% else %}student{% endif %}">
-                  {{ m.role }}
-                </span>
-              {% else %}
-                <span class="role-badge student">student</span>
-              {% endif %}
+              <span class="status-line">
+                <span class="status-dot {% if m.role == 'admin' %}danger{% elif m.role == 'teacher' %}active{% else %}success{% endif %}"></span>
+                {{ m.role or 'student' }}
+              </span>
             </td>
-            <td class="data-mono text-dim">{{ m.last_seen[:16] if m.last_seen else 'Never' }}</td>
-            <td class="data-mono">{{ m.total_detection }}</td>
+            <td class="muted">{{ m.last_seen[:16] if m.last_seen else 'NO_DATA' }}</td>
+            <td class="muted">{{ m.total_detection }}</td>
             <td>
-              <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" data-action="delete" data-id="{{ m.id }}" data-name="{{ m.name }}">
-                Delete
+              <button class="btn-sys danger" data-action="delete" data-id="{{ m.id }}" data-name="{{ m.name }}">
+                PURGE
               </button>
             </td>
           </tr>
@@ -66,24 +63,24 @@
     </div>
   </div>
   {% else %}
-  <div class="glass empty-state" style="text-align: center; padding: 4rem 2rem;">
-    <div class="empty-icon" style="font-size: 3rem; margin-bottom: 1rem;">📷</div>
-    <h2 style="font-family: var(--font-heading); margin-bottom: 0.5rem; color: #fff;">No members yet</h2>
-    <p class="text-dim" style="margin-bottom: 2rem;">Head to the dashboard to capture your first face and add it to the roster.</p>
-    <a href="{{ url_for('register') }}" class="btn btn-primary">
-      Register Member →
+  <div style="text-align: center; padding: 4rem 2rem;">
+    <p class="muted mono-sm" style="margin-bottom: 2rem;">NO SUBJECTS REGISTERED IN REGISTRY</p>
+    <a href="{{ url_for('register') }}" class="btn-sys">
+      ENROL FIRST SUBJECT
     </a>
   </div>
   {% endif %}
 
   <!-- Confirm-delete modal -->
-  <div class="modal-backdrop" id="confirm-modal" role="dialog" aria-modal="true" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;">
-    <div class="glass portal-card" style="max-width: 400px; width: 100%; padding: 2rem; border-color: var(--danger);">
-      <h3 style="font-family: var(--font-heading); color: #fff; margin-bottom: 1rem;">Delete member?</h3>
-      <p style="color: var(--text-dim); margin-bottom: 2rem;">This will permanently remove <strong id="confirm-name" style="color: #fff;"></strong> and their face data.</p>
+  <div id="confirm-modal" role="dialog" aria-modal="true" style="display: none; position: fixed; inset: 0; background: rgba(10,11,13,0.85); z-index: 100; align-items: center; justify-content: center;">
+    <div class="bracket-frame" style="max-width: 400px; width: 100%; border: 1px solid var(--danger);">
+      <h3 style="font-family: var(--font-heading); color: var(--danger); margin-bottom: 0.5rem; text-transform: uppercase;">Purge Subject?</h3>
+      <p style="color: var(--text-muted); margin-bottom: 2rem; font-family: var(--font-mono); font-size: 0.85rem;">
+        WARNING: This action will permanently erase vector data for <strong id="confirm-name" style="color: var(--text-primary);"></strong>.
+      </p>
       <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-        <button class="btn btn-ghost" data-action="cancel">Cancel</button>
-        <button class="btn btn-danger" data-action="confirm">Delete</button>
+        <button class="btn-sys ghost" data-action="cancel">ABORT</button>
+        <button class="btn-sys danger" data-action="confirm">CONFIRM PURGE</button>
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Admin Control Dashboard · FaceTrack AI{% endblock %}
+{% block title %}Admin Console · FaceTrack AI{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/portals.css') }}" />
 {% endblock %}
@@ -10,102 +10,96 @@
   <!-- ── Header ── -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">🛡️ System Administration</h1>
-      <p class="portal-sub">Institutional user governance, RBAC role assignments, and class section mapping.</p>
+      <h1 class="portal-title">System Administration</h1>
+      <p class="portal-sub">Institutional user governance, clearance assignments, and class mapping.</p>
     </div>
-    <a href="{{ url_for('admin_create_teacher') }}" class="btn btn-primary">
-      + Provision Teacher
+    <a href="{{ url_for('admin_create_teacher') }}" class="btn-sys">
+      PROVISION TEACHER
     </a>
   </div>
 
   <!-- ── Stats Metric Row ── -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-icon">🎓</div>
-      <div class="stat-value">{{ total_students }}</div>
-      <div class="stat-label">Registered Students</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">👩‍🏫</div>
-      <div class="stat-value">{{ total_teachers }}</div>
-      <div class="stat-label">Faculty Teachers</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">✅</div>
-      <div class="stat-value" style="color:var(--neon-green);">{{ present_today }}</div>
-      <div class="stat-label">Verified Today</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">📅</div>
-      <div class="stat-value data-mono" style="font-size:1.4rem;">{{ today }}</div>
-      <div class="stat-label">System Date</div>
+  <div class="bracket-frame" style="padding: 1.5rem 2rem;">
+    <div class="spec-strip">
+      <div class="spec-item">
+        <span class="spec-label">Registered Students</span>
+        <span class="spec-value">{{ total_students }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">Faculty Teachers</span>
+        <span class="spec-value">{{ total_teachers }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">Verified Today</span>
+        <span class="spec-value accent">{{ present_today }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">System Date</span>
+        <span class="spec-value data-mono">{{ today }}</span>
+      </div>
     </div>
   </div>
 
   <!-- ── User Roster Table Card ── -->
-  <div class="portal-card">
-    <div class="portal-card-header">
-      <h2>Institutional User Registry</h2>
-      <input type="text" id="userSearch" class="search-input"
-             placeholder="Search by name, username, class or role…" />
+  <div class="bracket-frame">
+    <div class="toolbar">
+      <span class="muted mono-sm">INSTITUTIONAL_USER_REGISTRY</span>
+      <input type="text" id="userSearch" class="form-input" placeholder="SEARCH QUERY..." style="width: 280px;" />
     </div>
 
     <div class="table-wrap">
       <table class="data-table" id="userTable">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Username</th>
+            <th>IDX</th>
+            <th>SUBJECT</th>
+            <th>SYSTEM ID</th>
             <th>USN</th>
-            <th>Class</th>
-            <th>Role</th>
-            <th>Joined</th>
-            <th>Actions</th>
+            <th>CLASSIFICATION</th>
+            <th>CLEARANCE</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
           {% for u in users %}
           <tr>
-            <td class="data-mono">{{ loop.index }}</td>
-            <td style="font-weight:700; color:#fff;">{{ u.name or '—' }}</td>
-            <td><code>{{ u.username }}</code></td>
-            <td class="data-mono">{{ u.usn or '—' }}</td>
-            <td class="data-mono">{{ u.class_name or '—' }}</td>
+            <td class="muted">{{ '%03d' % loop.index }}</td>
+            <td style="color:var(--text-primary); font-weight:500;">{{ u.name or 'UNKNOWN' }}</td>
+            <td>{{ u.username }}</td>
+            <td class="muted">{{ u.usn or 'N/A' }}</td>
+            <td class="muted">{{ u.class_name or 'N/A' }}</td>
             <td>
-              <span class="role-badge role-{{ u.role }}">{{ u.role }}</span>
+              <span class="status-line">
+                <span class="status-dot {% if u.role == 'admin' %}danger{% elif u.role == 'teacher' %}active{% else %}success{% endif %}"></span>
+                {{ u.role }}
+              </span>
             </td>
-            <td class="data-mono" style="color:var(--text-dim);">{{ u.created_at[:10] if u.created_at else '—' }}</td>
-            <td class="action-cell">
+            <td>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <!-- Edit role form -->
+                <form method="POST" action="{{ url_for('admin_set_role') }}" class="inline-form" id="role-form-{{ u.id }}">
+                  <input type="hidden" name="user_id" value="{{ u.id }}" />
+                  <select name="role" class="form-input" style="padding: 4px 8px;">
+                    <option value="student" {% if u.role=='student' %}selected{% endif %}>STUDENT</option>
+                    <option value="teacher" {% if u.role=='teacher' %}selected{% endif %}>TEACHER</option>
+                    <option value="admin" {% if u.role=='admin' %}selected{% endif %}>ADMIN</option>
+                  </select>
+                  <input name="class_name" class="form-input" style="padding: 4px 8px; width: 90px;" placeholder="CLASS" value="{{ u.class_name or '' }}" />
+                  <button type="submit" class="btn-sys ghost" style="padding: 4px 10px; font-size: 0.7rem;">SAVE</button>
+                </form>
 
-              <!-- Edit role form -->
-              <form method="POST" action="{{ url_for('admin_set_role') }}"
-                    class="inline-form" id="role-form-{{ u.id }}">
-                <input type="hidden" name="user_id" value="{{ u.id }}" />
-                <select name="role" class="mini-select">
-                  <option value="student"  {% if u.role=='student'  %}selected{% endif %}>student</option>
-                  <option value="teacher"  {% if u.role=='teacher'  %}selected{% endif %}>teacher</option>
-                  <option value="admin"    {% if u.role=='admin'    %}selected{% endif %}>admin</option>
-                </select>
-                <input name="class_name" class="mini-input" placeholder="Class"
-                       value="{{ u.class_name or '' }}" />
-                <button type="submit" class="btn btn-sm btn-ghost">Save</button>
-              </form>
-
-              <!-- Delete User Form -->
-              {% if u.username != session.username %}
-              <form method="POST" action="{{ url_for('admin_delete_user') }}"
-                    style="display:inline;"
-                    onsubmit="return confirm('Delete {{ u.username }}? This action cannot be undone.');">
-                <input type="hidden" name="user_id" value="{{ u.id }}" />
-                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-              </form>
-              {% endif %}
-
+                <!-- Delete User Form -->
+                {% if u.username != session.username %}
+                <form method="POST" action="{{ url_for('admin_delete_user') }}" style="display:inline;" onsubmit="return confirm('PURGE {{ u.username }}? THIS ACTION CANNOT BE UNDONE.');">
+                  <input type="hidden" name="user_id" value="{{ u.id }}" />
+                  <button type="submit" class="btn-sys" style="padding: 4px 10px; font-size: 0.7rem;">PURGE</button>
+                </form>
+                {% endif %}
+              </div>
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="8" class="empty-state">No users registered in system database.</td></tr>
+          <tr><td colspan="7" class="muted" style="text-align: center; padding: 2rem;">NO REGISTRY DATA FOUND</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -116,11 +110,13 @@
 
 <script>
   const searchBox = document.getElementById('userSearch');
-  searchBox.addEventListener('input', () => {
-    const q = searchBox.value.toLowerCase();
-    document.querySelectorAll('#userTable tbody tr').forEach(row => {
-      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  if(searchBox) {
+    searchBox.addEventListener('input', () => {
+      const q = searchBox.value.toLowerCase();
+      document.querySelectorAll('#userTable tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
     });
-  });
+  }
 </script>
 {% endblock %}

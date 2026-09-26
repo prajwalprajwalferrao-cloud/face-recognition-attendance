@@ -1,115 +1,41 @@
 /* ========================================================================
-   login.css — Auth Styling: Option A (Precision / Biometric Lab)
+   login.css — Auth Styling: Optical Verification
    ======================================================================== */
 
-.login-body {
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-0, #04070c);
-  color: var(--text, #f1f5f9);
-  min-height: 100vh;
+.auth-body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem 1rem;
-  position: relative;
-  overflow-x: hidden;
+  min-height: 100vh;
+  padding: 2rem;
 }
 
-/* ── Ambient Mesh Background ────────────────────────────────────────── */
-.ambient-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.ambient-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0, 245, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 255, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 10%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 10%, transparent 70%);
-}
-
-.aura-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(150px);
-  opacity: 0.15;
-}
-
-.orb-1 {
-  width: 600px;
-  height: 600px;
-  background: var(--neon-cyan, #00f5ff);
-  top: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.orb-2 {
-  width: 500px;
-  height: 500px;
-  background: var(--neon-green, #00ff88);
-  bottom: -100px;
-  right: -100px;
-}
-
-/* ── Auth Card & Layout ─────────────────────────────────────────────── */
 .auth-container {
   width: 100%;
-  max-width: 440px;
-  position: relative;
-  z-index: 2;
+  max-width: 460px;
 }
 
 .auth-brand {
-  text-align: center;
   margin-bottom: 2rem;
+  text-align: center;
 }
-
 .auth-brand a {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--text-primary);
   text-decoration: none;
   letter-spacing: -0.02em;
 }
 
-.auth-brand span {
-  color: var(--neon-cyan, #00f5ff);
-}
-
-.auth-card-clean {
-  background: var(--glass, rgba(14, 21, 34, 0.75));
-  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: var(--radius-lg, 16px);
-  padding: 2.5rem 2rem;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-card, 0 16px 40px -10px rgba(0, 0, 0, 0.7));
-  position: relative;
-  overflow: hidden;
-}
-
 .auth-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 0.35rem;
-  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
-
 .auth-sub {
+  color: var(--text-secondary);
   font-size: 0.9rem;
-  color: var(--text-dim, #94a3b8);
-  margin-bottom: 1.75rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .auth-form {
@@ -121,91 +47,75 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
-
 .form-label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-mute, #64748b);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-
 .form-input {
   width: 100%;
-  padding: 12px 14px;
-  background: var(--bg-1, #080d16);
-  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: var(--radius-sm, 6px);
-  color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.form-input::placeholder { color: var(--text-mute, #64748b); }
-
-.form-input:focus {
-  border-color: var(--neon-cyan, #00f5ff);
-  background: var(--bg-2, #0e1522);
-  box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.15);
-}
-
-.btn-auth-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 13px 20px;
-  background: var(--neon-cyan, #00f5ff);
-  color: #000;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  border: none;
-  border-radius: var(--radius-sm, 6px);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 0.5rem;
-}
-
-.btn-auth-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow, 0 0 25px rgba(0, 245, 255, 0.25));
 }
 
 .auth-footer {
   text-align: center;
   margin-top: 1.5rem;
-  font-size: 0.88rem;
-  color: var(--text-dim, #94a3b8);
-}
-
-.auth-footer a {
-  color: var(--neon-cyan, #00f5ff);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
-.auth-back {
-  text-align: center;
-  margin-top: 1.25rem;
   font-size: 0.85rem;
+  color: var(--text-secondary);
 }
-
-.auth-back a {
-  color: var(--text-mute, #64748b);
+.auth-footer a {
+  color: var(--accent);
   text-decoration: none;
-  transition: color 0.2s;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.auth-back a:hover {
-  color: #fff;
+/* ── Custom Capture UI for Register ── */
+.capture-ui {
+  border-top: 1px solid var(--grid-line);
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+}
+.video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  margin-bottom: 1rem;
+}
+.video-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+.live-status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(10, 11, 13, 0.8);
+  padding: 4px 8px;
+  border: 1px solid var(--grid-line);
+}
+
+/* 5 bracket slots */
+.capture-slots {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+.capture-slot {
+  flex: 1;
+  height: 8px;
+  border: 1px solid var(--text-muted);
+  position: relative;
+  transition: all 0.2s;
+}
+.capture-slot.filled {
+  border-color: var(--accent);
+  background: var(--accent);
 }

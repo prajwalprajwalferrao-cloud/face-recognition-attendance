@@ -5,51 +5,50 @@
 {% endblock %}
 
 {% block content %}
-<div class="portal-page" style="max-width:680px; margin:0 auto;">
+<div class="portal-page" style="max-width:640px; margin:0 auto;">
 
   <!-- Header -->
   <div class="portal-header">
     <div>
-      <h1 class="portal-title">👩‍🏫 Provision Teacher Account</h1>
-      <p class="portal-sub">Teachers receive attendance log viewing & CSV report export permissions.</p>
+      <h1 class="portal-title">Provision Teacher</h1>
+      <p class="portal-sub">Grant educator-level clearance with attendance log access and CSV export permissions.</p>
     </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn-sys ghost">&larr; ABORT</a>
   </div>
 
   <!-- Form Card -->
-  <div class="glass portal-card" style="padding:2.25rem;">
-    <form method="POST" action="{{ url_for('admin_create_teacher') }}">
-      <div class="field">
-        <label for="username">Teacher Username</label>
-        <input id="username" name="username" type="text" required autofocus
-               placeholder="e.g. prof_sharma" />
+  <div class="bracket-frame">
+    <div class="toolbar" style="margin-bottom: 1.5rem;">
+      <span class="muted mono-sm">CREDENTIAL_INPUT</span>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_create_teacher') }}" class="auth-form">
+
+      <div class="form-group">
+        <label for="username" class="form-label">System Username</label>
+        <input id="username" name="username" type="text" required autofocus class="form-input" />
       </div>
 
-      <div class="field">
-        <label for="name">Full Name</label>
-        <input id="name" name="name" type="text" required
-               placeholder="e.g. Dr. Priya Sharma" />
+      <div class="form-group">
+        <label for="name" class="form-label">Full Name</label>
+        <input id="name" name="name" type="text" required class="form-input" />
       </div>
 
-      <div class="field">
-        <label for="class_name">Assigned Class / Department (optional)</label>
-        <input id="class_name" name="class_name" type="text"
-               placeholder="e.g. CS-A, Computer Science" />
+      <div class="form-group">
+        <label for="class_name" class="form-label">Assigned Classification (optional)</label>
+        <input id="class_name" name="class_name" type="text" class="form-input" placeholder="e.g. CS-A" />
       </div>
 
-      <div class="field">
-        <label for="password">Account Password</label>
-        <input id="password" name="password" type="password" required minlength="6"
-               placeholder="At least 6 characters" />
+      <div class="form-group">
+        <label for="password" class="form-label">Access Password</label>
+        <input id="password" name="password" type="password" required minlength="6" class="form-input" />
       </div>
 
-      <div style="display:flex; gap:1rem; margin-top:1.5rem; align-items:center;">
-        <button type="submit" class="btn btn-primary" style="flex:1;">
-          Create Teacher Account →
-        </button>
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost">
-          Cancel
-        </a>
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button type="submit" class="btn-sys" style="flex:1;">PROVISION ACCOUNT</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-sys ghost">ABORT</a>
       </div>
+
     </form>
   </div>
 
